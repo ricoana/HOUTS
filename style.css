@@ -311,6 +311,7 @@ body {
     cursor: pointer;
     flex-direction: column;
     gap: 6px;
+    z-index: 1001; /* Keeps toggle button above sliding panel */
 }
 
 .mobile-menu-toggle span {
@@ -332,20 +333,38 @@ body {
     .mobile-menu-toggle { display: flex; }
     
     .nav-menu {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
+        position: fixed;
+        top: 0;
+        right: -100%; /* Hidden off-screen to the right side */
+        width: 280px; /* Panel Width dimensions */
+        height: 100vh;
         background: var(--bg-surface);
-        border-bottom: 1px solid var(--border);
-        padding: 2rem;
+        border-left: 1px solid var(--border);
+        padding: 6rem 2rem 2rem 2rem; /* Added generous top padding to make space for the close toggle button */
         flex-direction: column;
-        gap: 1.5rem;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 2rem;
+        transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
     }
 
-    .nav-menu.active { display: flex; }
-    .nav-cta-btn { width: 100%; text-align: center; }
+    .nav-menu.active { 
+        right: 0; /* Slides smoothly into viewport view */
+    }
+    
+    .nav-link {
+        width: 100%;
+        font-size: 1.1rem;
+    }
+
+    .nav-cta-btn { 
+        width: 100%; 
+        text-align: center; 
+        padding: 0.8rem 1.1rem;
+    }
+    
     .mobile-menu-toggle.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
     .mobile-menu-toggle.active span:nth-child(2) { opacity: 0; }
     .mobile-menu-toggle.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
