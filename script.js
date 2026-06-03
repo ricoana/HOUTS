@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 2. POP-UP MODAL ENGINE ---
+    // --- 2. POP-UP MODAL ENGINE (FULL-SCREEN MODE) ---
     const injectModalHTML = () => {
         if (document.getElementById('auth-modal-overlay')) return;
 
@@ -51,28 +51,24 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.id = 'auth-modal-overlay';
         overlay.style.cssText = `
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(10, 10, 12, 0.4); backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px); z-index: 999;
+            background: rgba(10, 10, 12, 0.6); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); z-index: 9999;
             display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         `;
 
         const modal = document.createElement('div');
         modal.id = 'auth-modal-card';
         modal.style.cssText = `
-            display: block; width: 92%; max-width: 840px; border-radius: 16px;
-            background: #121214; border: 1px solid rgba(255, 255, 255, 0.08); padding: 0;
-            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4); text-align: left;
-            transform: scale(0.9); transition: transform 0.3s ease; position: relative;
-            overflow: hidden; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: block; width: 100%; height: 100%;
+            background: #0c0c0e; padding: 0;
+            text-align: left; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
+            position: relative; overflow-y: auto; color: #ffffff; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         `;
 
         overlay.appendChild(modal);
         document.body.appendChild(overlay);
-
-        overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) hideAuthModal();
-        });
     };
 
     const showAuthModal = (mode, user = null) => {
@@ -80,120 +76,139 @@ document.addEventListener('DOMContentLoaded', () => {
         const modal = document.getElementById('auth-modal-card');
         const overlay = document.getElementById('auth-modal-overlay');
         
-        if (mode === 'signup') {
-            modal.style.maxWidth = '400px';
-            modal.style.padding = '2.5rem 2rem';
-            modal.innerHTML = `
-                <h3 style="margin-top:0; font-size: 1.75rem; margin-bottom: 0.5rem; color: #ffffff;">Create Account</h3>
-                <p style="text-align:left; margin-bottom: 1.5rem; color: #a1a1aa;">Join HOUTS to build your project for real.</p>
-                <form id="auth-form">
-                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Email Address</label>
-                    <input type="email" id="auth-email" required style="width:100%; padding:0.8rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1e; color:#ffffff; margin-bottom:1rem; outline:none; font-size:1rem;">
-                    
-                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Password</label>
-                    <input type="password" id="auth-password" required style="width:100%; padding:0.8rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1e; color:#ffffff; margin-bottom:1.5rem; outline:none; font-size:1rem;">
-                    
-                    <button type="submit" style="width:100%; background:#ffffff; color:#000000; border:none; padding:0.9rem; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer;">Sign Up</button>
-                </form>
-                <p style="margin-top:1.2rem; font-size:0.85rem; margin-bottom:0; color:#71717a;">Already registered? <a href="#" id="switch-to-login" style="color:#ffffff; font-weight:600; text-decoration:none;">Log In</a></p>
+        if (mode === 'signup' || mode === 'login') {
+            // Keep auth screens as clean modal boxes centered on screen
+            modal.style.cssText = `
+                display: block; width: 95%; max-width: 400px; height: auto; border-radius: 16px;
+                background: #121214; border: 1px solid rgba(255, 255, 255, 0.08); padding: 2.5rem 2rem;
+                box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4); text-align: left;
+                transform: translateY(20px); transition: all 0.3s ease; position: relative;
+                color: #ffffff; font-family: sans-serif;
             `;
+            
+            if (mode === 'signup') {
+                modal.innerHTML = `
+                    <h3 style="margin-top:0; font-size: 1.75rem; margin-bottom: 0.5rem; color: #ffffff;">Create Account</h3>
+                    <p style="text-align:left; margin-bottom: 1.5rem; color: #a1a1aa;">Join HOUTS to build your project for real.</p>
+                    <form id="auth-form">
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Email Address</label>
+                        <input type="email" id="auth-email" required style="width:100%; padding:0.8rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1e; color:#ffffff; margin-bottom:1rem; outline:none; font-size:1rem;">
+                        
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Password</label>
+                        <input type="password" id="auth-password" required style="width:100%; padding:0.8rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1e; color:#ffffff; margin-bottom:1.5rem; outline:none; font-size:1rem;">
+                        
+                        <button type="submit" style="width:100%; background:#ffffff; color:#000000; border:none; padding:0.9rem; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer;">Sign Up</button>
+                    </form>
+                    <p style="margin-top:1.2rem; font-size:0.85rem; margin-bottom:0; color:#71717a;">Already registered? <a href="#" id="switch-to-login" style="color:#ffffff; font-weight:600; text-decoration:none;">Log In</a></p>
+                `;
+            } else {
+                modal.innerHTML = `
+                    <h3 style="margin-top:0; font-size: 1.75rem; margin-bottom: 0.5rem; color:#ffffff;">Welcome Back</h3>
+                    <p style="text-align:left; margin-bottom: 1.5rem; color:#a1a1aa;">Log into your live profile dashboard.</p>
+                    <form id="auth-form">
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Email Address</label>
+                        <input type="email" id="auth-email" required style="width:100%; padding:0.8rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1e; color:#ffffff; margin-bottom:1rem; outline:none; font-size:1rem;">
+                        
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Password</label>
+                        <input type="password" id="auth-password" required style="width:100%; padding:0.8rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1e; color:#ffffff; margin-bottom:1.5rem; outline:none; font-size:1rem;">
+                        
+                        <button type="submit" style="width:100%; background:#ffffff; color:#000000; border:none; padding:0.9rem; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer;">Log In</button>
+                    </form>
+                    <p style="margin-top:1.2rem; font-size:0.85rem; margin-bottom:0; color:#71717a;">New to HOUTS? <a href="#" id="switch-to-signup" style="color:#ffffff; font-weight:600; text-decoration:none;">Create Account</a></p>
+                `;
+            }
             document.getElementById('auth-form').addEventListener('submit', (e) => handleAuthSubmit(e, mode));
             
             const switchLogin = document.getElementById('switch-to-login');
             if (switchLogin) switchLogin.addEventListener('click', (e) => { e.preventDefault(); showAuthModal('login'); });
-        } else if (mode === 'login') {
-            modal.style.maxWidth = '400px';
-            modal.style.padding = '2.5rem 2rem';
-            modal.innerHTML = `
-                <h3 style="margin-top:0; font-size: 1.75rem; margin-bottom: 0.5rem; color:#ffffff;">Welcome Back</h3>
-                <p style="text-align:left; margin-bottom: 1.5rem; color:#a1a1aa;">Log into your live profile dashboard.</p>
-                <form id="auth-form">
-                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Email Address</label>
-                    <input type="email" id="auth-email" required style="width:100%; padding:0.8rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1e; color:#ffffff; margin-bottom:1rem; outline:none; font-size:1rem;">
-                    
-                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Password</label>
-                    <input type="password" id="auth-password" required style="width:100%; padding:0.8rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1e; color:#ffffff; margin-bottom:1.5rem; outline:none; font-size:1rem;">
-                    
-                    <button type="submit" style="width:100%; background:#ffffff; color:#000000; border:none; padding:0.9rem; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer;">Log In</button>
-                </form>
-                <p style="margin-top:1.2rem; font-size:0.85rem; margin-bottom:0; color:#71717a;">New to HOUTS? <a href="#" id="switch-to-signup" style="color:#ffffff; font-weight:600; text-decoration:none;">Create Account</a></p>
-            `;
-            document.getElementById('auth-form').addEventListener('submit', (e) => handleAuthSubmit(e, mode));
-            
             const switchSignup = document.getElementById('switch-to-signup');
             if (switchSignup) switchSignup.addEventListener('click', (e) => { e.preventDefault(); showAuthModal('signup'); });
+
+            setTimeout(() => { modal.style.transform = 'translateY(0)'; }, 10);
+
         } else if (mode === 'account' && user) {
-            // Expand the general framework modal container geometry
-            modal.style.maxWidth = '840px';
-            modal.style.padding = '0';
+            // Take over the entire screen workspace seamlessly
+            modal.style.cssText = `
+                display: flex; flex-direction: row; width: 100%; height: 100%;
+                background: #0c0c0e; padding: 0; color: #ffffff; position: relative;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            `;
 
             const currentUsername = user.displayName || user.email.split('@')[0];
 
             modal.innerHTML = `
-                <div style="display: flex; flex-direction: row; min-height: 440px; width: 100%; background: #121214;">
-                    
-                    <div style="width: 240px; min-width: 240px; flex-shrink: 0; background: #16161a; border-right: 1px solid rgba(255, 255, 255, 0.05); padding: 2rem 1rem; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box;">
-                        <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
-                            <button id="modal-tab-profile" style="width: 100%; background: rgba(255, 255, 255, 0.06); color: #ffffff; border: none; padding: 0.8rem 1.2rem; border-radius: 8px; font-weight: 500; cursor: pointer; text-align: left; font-size: 0.95rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.75rem; box-sizing: border-box; white-space: nowrap;">
-                                <span style="font-size: 1.1rem; line-height: 1;">👤</span> Profile
-                            </button>
-                            <button id="modal-tab-settings" style="width: 100%; background: transparent; color: #a1a1aa; border: none; padding: 0.8rem 1.2rem; border-radius: 8px; font-weight: 500; cursor: pointer; text-align: left; font-size: 0.95rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.75rem; box-sizing: border-box; white-space: nowrap;">
-                                <span style="font-size: 1.1rem; line-height: 1;">⚙️</span> Settings
-                            </button>
+                <div style="width: 280px; min-width: 280px; background: #111113; border-right: 1px solid rgba(255, 255, 255, 0.04); padding: 3rem 1.5rem; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box;">
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+                        <div style="margin-bottom: 2rem; padding-left: 0.5rem;">
+                            <h2 style="margin: 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.5px; color: #ffffff;">HOUTS SYSTEM</h2>
+                            <p style="margin: 0.2rem 0 0 0; font-size: 0.8rem; color: #71717a;">Control Center Workspace</p>
                         </div>
-                        
-                        <button id="close-settings-modal" style="width: 100%; background: transparent; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 0.65rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background 0.2s; box-sizing: border-box; white-space: nowrap;">Close Menu</button>
-                    </div>
 
-                    <div style="flex-grow: 1; padding: 2.5rem 3rem; display: flex; flex-direction: column; justify-content: flex-start; background: #121214; box-sizing: border-box; overflow-x: hidden;">
+                        <button id="modal-tab-profile" style="width: 100%; background: rgba(255, 255, 255, 0.06); color: #ffffff; border: none; padding: 0.85rem 1.2rem; border-radius: 8px; font-weight: 500; cursor: pointer; text-align: left; font-size: 0.95rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.75rem; box-sizing: border-box;">
+                            <span style="font-size: 1.1rem; line-height: 1;">👤</span> Profile Settings
+                        </button>
+                        <button id="modal-tab-settings" style="width: 100%; background: transparent; color: #a1a1aa; border: none; padding: 0.85rem 1.2rem; border-radius: 8px; font-weight: 500; cursor: pointer; text-align: left; font-size: 0.95rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.75rem; box-sizing: border-box;">
+                            <span style="font-size: 1.1rem; line-height: 1;">⚙️</span> System Settings
+                        </button>
+                    </div>
+                    
+                    <button id="close-settings-modal" style="width: 100%; background: #1a1a1e; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.08); padding: 0.75rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; box-sizing: border-box; text-align: center;">Exit Dashboard</button>
+                </div>
+
+                <div style="flex-grow: 1; height: 100%; overflow-y: auto; padding: 5rem 6rem; display: flex; flex-direction: column; justify-content: flex-start; background: #0c0c0e; box-sizing: border-box;">
+                    <div style="width: 100%; max-width: 640px; display: flex; flex-direction: column;">
                         
-                        <div id="m-panel-profile" style="display: flex; flex-direction: column; gap: 1.75rem; width: 100%;">
+                        <div id="m-panel-profile" style="display: flex; flex-direction: column; gap: 2.5rem; width: 100%;">
                             <div>
-                                <h4 style="margin: 0 0 0.4rem 0; font-size: 1.5rem; font-weight: 600; color: #ffffff;">Profile Configuration</h4>
-                                <p style="margin: 0; font-size: 0.85rem; color: #a1a1aa;">Manage your public facing developer handle settings.</p>
+                                <h1 style="margin: 0 0 0.5rem 0; font-size: 2.2rem; font-weight: 700; color: #ffffff; letter-spacing: -0.5px;">Profile Configuration</h1>
+                                <p style="margin: 0; font-size: 0.95rem; color: #a1a1aa; line-height: 1.5;">Review personal credential metadata allocations mapping to active live endpoints.</p>
                             </div>
                             
-                            <div style="display: flex; flex-direction: column; gap: 1.4rem; margin-top: 0.5rem; width: 100%;">
+                            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.06); margin: 0; width: 100%;">
+
+                            <div style="display: flex; flex-direction: column; gap: 2rem; width: 100%;">
                                 <div>
-                                    <p style="margin: 0 0 0.3rem 0; font-size: 0.75rem; font-weight: 600; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px;">Current Public Name</p>
-                                    <span id="display-username-text" style="font-size: 1.15rem; font-weight: 600; color: #ffffff;">${currentUsername}</span>
+                                    <p style="margin: 0 0 0.5rem 0; font-size: 0.8rem; font-weight: 600; color: #71717a; text-transform: uppercase; letter-spacing: 1px;">Current Developer Handle</p>
+                                    <span id="display-username-text" style="font-size: 1.35rem; font-weight: 600; color: #ffffff;">${currentUsername}</span>
                                 </div>
                                 <div>
-                                    <p style="margin: 0 0 0.3rem 0; font-size: 0.75rem; font-weight: 600; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px;">Account Email Address</p>
-                                    <span style="font-size: 1.05rem; font-weight: 400; color: #e4e4e7;">${user.email}</span>
+                                    <p style="margin: 0 0 0.5rem 0; font-size: 0.8rem; font-weight: 600; color: #71717a; text-transform: uppercase; letter-spacing: 1px;">Primary Node Email</p>
+                                    <span style="font-size: 1.15rem; font-weight: 400; color: #e4e4e7;">${user.email}</span>
                                 </div>
                                 
-                                <form id="username-update-form" style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.5rem; width: 100%; max-width: 480px;">
-                                    <label style="font-size:0.85rem; font-weight:500; color:#e4e4e7;">Change Username</label>
-                                    <div style="display: flex; gap: 0.6rem; width: 100%;">
-                                        <input type="text" id="new-username-input" placeholder="Enter new username" required style="flex-grow: 1; padding:0.65rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:#1a1a1e; color:#ffffff; outline:none; font-size:0.95rem; min-width: 0;">
-                                        <button type="submit" id="username-save-btn" style="background:#ffffff; color:#000000; border:none; padding:0 1.5rem; border-radius:8px; font-size:0.9rem; font-weight:600; cursor:pointer; white-space: nowrap; transition: background 0.2s;">Save</button>
+                                <form id="username-update-form" style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1rem; width: 100%;">
+                                    <label style="font-size:0.9rem; font-weight:500; color:#e4e4e7;">Modify User Account ID</label>
+                                    <div style="display: flex; gap: 0.75rem; width: 100%;">
+                                        <input type="text" id="new-username-input" placeholder="Enter new handle" required style="flex-grow: 1; padding:0.75rem 1.2rem; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:#141416; color:#ffffff; outline:none; font-size:1rem; min-width: 0;">
+                                        <button type="submit" id="username-save-btn" style="background:#ffffff; color:#000000; border:none; padding:0 1.8rem; border-radius:8px; font-size:0.95rem; font-weight:600; cursor:pointer; white-space: nowrap; transition: background 0.2s;">Save Changes</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
 
-                        <div id="m-panel-settings" style="display: none; flex-direction: column; gap: 1.75rem; width: 100%;">
+                        <div id="m-panel-settings" style="display: none; flex-direction: column; gap: 2.5rem; width: 100%;">
                             <div>
-                                <h4 style="margin: 0 0 0.4rem 0; font-size: 1.5rem; font-weight: 600; color: #ffffff;">Account Settings</h4>
-                                <p style="margin: 0; font-size: 0.85rem; color: #a1a1aa;">Configure your security pipeline preferences and cloud status.</p>
+                                <h1 style="margin: 0 0 0.5rem 0; font-size: 2.2rem; font-weight: 700; color: #ffffff; letter-spacing: -0.5px;">System Settings</h1>
+                                <p style="margin: 0; font-size: 0.95rem; color: #a1a1aa; line-height: 1.5;">Configure authorization ecosystem preferences and telemetry validation status.</p>
                             </div>
                             
-                            <div style="display: flex; flex-direction: column; gap: 1.2rem; margin-top: 0.5rem; width: 100%;">
-                                <div style="background: #1a1a1e; border: 1px solid rgba(255, 255, 255, 0.04); padding: 1.2rem 1.5rem; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem;">
+                            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.06); margin: 0; width: 100%;">
+
+                            <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
+                                <div style="background: #111113; border: 1px solid rgba(255, 255, 255, 0.04); padding: 1.25rem 1.75rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem;">
                                     <div>
-                                        <p style="margin: 0 0 0.15rem 0; font-weight: 500; font-size: 1rem; color: #ffffff;">Cloud Ecosystem State</p>
-                                        <p style="margin: 0; font-size: 0.85rem; color: #71717a;">Standard unrestricted node running.</p>
+                                        <p style="margin: 0 0 0.2rem 0; font-weight: 500; font-size: 1.05rem; color: #ffffff;">Cloud Ecosystem State</p>
+                                        <p style="margin: 0; font-size: 0.85rem; color: #71717a;">Standard unrestricted node connection running efficiently.</p>
                                     </div>
-                                    <span style="font-size: 0.75rem; background: rgba(34, 197, 94, 0.1); color: #22c55e; padding: 0.3rem 0.75rem; border-radius: 6px; font-weight: 600; border: 1px solid rgba(34, 197, 94, 0.2); white-space: nowrap;">ONLINE</span>
+                                    <span style="font-size: 0.75rem; background: rgba(34, 197, 94, 0.1); color: #22c55e; padding: 0.35rem 0.8rem; border-radius: 6px; font-weight: 600; border: 1px solid rgba(34, 197, 94, 0.2); white-space: nowrap;">ONLINE</span>
                                 </div>
 
-                                <div style="background: #1a1a1e; border: 1px solid rgba(255, 255, 255, 0.04); padding: 1.2rem 1.5rem; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem;">
+                                <div style="background: #111113; border: 1px solid rgba(255, 255, 255, 0.04); padding: 1.25rem 1.75rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem;">
                                     <div>
-                                        <p style="margin: 0 0 0.15rem 0; font-weight: 500; font-size: 1rem; color: #ffffff;">Security Tokens</p>
-                                        <p style="margin: 0; font-size: 0.85rem; color: #71717a;">SSL cryptographic handshakes verified.</p>
+                                        <p style="margin: 0 0 0.2rem 0; font-weight: 500; font-size: 1.05rem; color: #ffffff;">Security Tokens</p>
+                                        <p style="margin: 0; font-size: 0.85rem; color: #71717a;">SSL cryptographic secure handshake keys validated.</p>
                                     </div>
-                                    <span style="font-size: 0.75rem; background: rgba(99, 102, 241, 0.1); color: #818cf8; padding: 0.3rem 0.75rem; border-radius: 6px; font-weight: 600; border: 1px solid rgba(99, 102, 241, 0.2); white-space: nowrap;">ACTIVE</span>
+                                    <span style="font-size: 0.75rem; background: rgba(99, 102, 241, 0.1); color: #818cf8; padding: 0.35rem 0.8rem; border-radius: 6px; font-weight: 600; border: 1px solid rgba(99, 102, 241, 0.2); white-space: nowrap;">ACTIVE</span>
                                 </div>
                             </div>
                         </div>
@@ -202,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
 
-            // Layout Tab Core Switching Engines Logic
+            // Tab Navigation Mechanics Logic
             const tabProfile = document.getElementById('modal-tab-profile');
             const tabSettings = document.getElementById('modal-tab-settings');
 
@@ -233,12 +248,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 pSettings.style.display = 'flex';
             });
 
-            const closeBtn = document.getElementById('close-settings-modal');
-            closeBtn.addEventListener('mouseenter', () => closeBtn.style.background = 'rgba(239, 68, 68, 0.1)');
-            closeBtn.addEventListener('mouseleave', () => closeBtn.style.background = 'transparent');
-            closeBtn.addEventListener('click', hideAuthModal);
+            const exitBtn = document.getElementById('close-settings-modal');
+            exitBtn.addEventListener('mouseenter', () => exitBtn.style.background = '#1e1e24');
+            exitBtn.addEventListener('mouseleave', () => exitBtn.style.background = '#1a1a1e');
+            exitBtn.addEventListener('click', hideAuthModal);
 
-            // Live Update Display Name Form Submission Task
+            // Update Username Logic Action
             document.getElementById('username-update-form').addEventListener('submit', (e) => {
                 e.preventDefault();
                 const newUsername = document.getElementById('new-username-input').value.trim();
@@ -251,11 +266,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.getElementById('display-username-text').textContent = newUsername;
                         document.getElementById('new-username-input').value = '';
                         
-                        saveBtn.textContent = 'Saved! ✓';
+                        saveBtn.textContent = 'Saved Handle! ✓';
                         saveBtn.style.background = '#22c55e';
                         saveBtn.style.color = '#ffffff';
                         setTimeout(() => {
-                            saveBtn.textContent = 'Save';
+                            saveBtn.textContent = 'Save Changes';
                             saveBtn.style.background = '#ffffff';
                             saveBtn.style.color = '#000000';
                         }, 2000);
@@ -268,16 +283,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         overlay.style.opacity = '1';
         overlay.style.pointerEvents = 'auto';
-        modal.style.transform = 'scale(1)';
     };
 
     const hideAuthModal = () => {
         const overlay = document.getElementById('auth-modal-overlay');
-        const modal = document.getElementById('auth-modal-card');
-        if (overlay && modal) {
+        if (overlay) {
             overlay.style.opacity = '0';
             overlay.style.pointerEvents = 'none';
-            modal.style.transform = 'scale(0.9)';
         }
     };
 
