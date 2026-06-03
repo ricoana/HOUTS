@@ -1,4 +1,4 @@
-// --- 1. INITIALIZE REAL FIREBASE ---
+// --- 1. FIREBASE CONFIGURATION ---
 const firebaseConfig = {
   apiKey: "AIzaSyBpKAChVSQXsGJzplgsOb8CvTcXKF2jjvU",
   authDomain: "houts-auth.firebaseapp.com",
@@ -14,7 +14,7 @@ const db = firebase.firestore();
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Mobile navigation active class controls
+    // Mobile Hamburger Dropdown Action
     const menuToggle = document.querySelector('.mobile-menu-toggle');
     const navMenu = document.querySelector('.nav-menu');
 
@@ -23,69 +23,82 @@ document.addEventListener('DOMContentLoaded', () => {
             menuToggle.classList.toggle('active');
             navMenu.classList.toggle('active');
         });
+
+        navMenu.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                menuToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
     }
 
-    // --- 2. MODAL SYSTEM INJECTION ENGINE ---
+    // --- 2. POP-UP MODAL WINDOW STYLES ---
     const injectModalHTML = () => {
         if (document.getElementById('auth-modal-overlay')) return;
 
         const styleTag = document.createElement('style');
-        styleTag.id = 'modal-core-styles';
+        styleTag.id = 'modal-standalone-design';
         styleTag.innerHTML = `
             #auth-modal-overlay {
                 position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-                background: rgba(10, 10, 12, 0.75); backdrop-filter: blur(15px);
-                -webkit-backdrop-filter: blur(15px); z-index: 99999;
+                background: rgba(10, 10, 12, 0.75); backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px); z-index: 999999;
                 display: flex; justify-content: center; align-items: center;
                 opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
                 box-sizing: border-box;
             }
-            .modal-box-card {
+            .modal-login-card {
                 background: #121214; border: 1px solid rgba(255, 255, 255, 0.08);
-                width: 90%; max-width: 400px; border-radius: 16px; padding: 2.25rem 1.75rem;
-                box-shadow: 0 20px 50px rgba(0,0,0,0.5); color: #ffffff;
-                box-sizing: border-box; position: relative;
+                width: 90%; max-width: 400px; border-radius: 16px; padding: 2.5rem 2rem;
+                box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4); text-align: left;
+                position: relative; color: #ffffff; font-family: sans-serif;
+                box-sizing: border-box;
             }
+            .modal-login-card h3 { margin: 0 0 0.5rem 0; font-size: 1.75rem; color: #ffffff; font-weight:700; text-align:left; }
+            .modal-login-card p { text-align:left; margin: 0 0 1.5rem 0; color: #a1a1aa; font-size: 0.95rem; }
+            
             .modal-dashboard-layout {
-                background: #0c0c0e; border: 1px solid rgba(255, 255, 255, 0.05);
-                width: 92%; max-width: 760px; height: 85vh; max-height: 600px;
-                border-radius: 20px; display: grid; grid-template-columns: 240px 1fr;
-                box-shadow: 0 30px 70px rgba(0,0,0,0.6); color: #ffffff;
-                overflow: hidden; box-sizing: border-box; position: relative;
+                display: grid; grid-template-columns: 240px minmax(0, 1fr);
+                width: 90%; max-width: 800px; height: 80vh; max-height: 560px;
+                background: #0c0c0e; border: 1px solid rgba(255, 255, 255, 0.06);
+                border-radius: 20px; overflow: hidden; box-shadow: 0 30px 70px rgba(0,0,0,0.5);
+                position: relative; color: #ffffff; font-family: sans-serif;
+                box-sizing: border-box;
             }
             .modal-sidebar {
                 background: #111113; border-right: 1px solid rgba(255, 255, 255, 0.05);
                 padding: 2rem 1.25rem; display: flex; flex-direction: column;
-                justify-content: space-between; box-sizing: border-box;
+                justify-content: space-between; box-sizing: border-box; height: 100%;
             }
-            .modal-main-view {
-                padding: 2.5rem; overflow-y: auto; background: #0c0c0e; box-sizing: border-box;
+            .modal-main-content {
+                height: 100%; overflow-y: auto; padding: 3rem 2.5rem;
+                background: #0c0c0e; box-sizing: border-box; text-align: left;
             }
-            .tab-btn {
-                width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: none;
-                background: transparent; color: #a1a1aa; font-weight: 600; font-size: 0.9rem;
+            .modal-sidebar-btn {
+                width: 100%; background: transparent; color: #a1a1aa; border: none;
+                padding: 0.75rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem;
                 cursor: pointer; text-align: left; display: flex; align-items: center; gap: 0.5rem;
-                transition: all 0.2s ease; box-sizing: border-box;
+                box-sizing: border-box; transition: all 0.2s;
             }
-            .tab-btn.active { background: rgba(255, 255, 255, 0.06); color: #ffffff; }
-            .modal-input {
-                width: 100%; padding: 0.75rem 1rem; border-radius: 8px;
+            .modal-sidebar-btn.active { background: rgba(255, 255, 255, 0.06); color: #ffffff; }
+            .modal-input-field {
+                width: 100%; padding: 0.8rem 1rem; border-radius: 8px;
                 border: 1px solid rgba(255,255,255,0.1); background: #1a1a1e;
-                color: #ffffff; outline: none; margin-bottom: 1.25rem; font-size: 0.95rem;
-                box-sizing: border-box;
+                color: #ffffff; margin-bottom: 1.25rem; outline: none; font-size: 1rem;
+                box-sizing: border-box; display: block;
             }
-            .modal-submit-btn {
-                width: 100%; background: #ffffff; color: #000000; font-weight: 700;
-                border: none; padding: 0.85rem; border-radius: 8px; cursor: pointer;
-                font-size: 0.95rem; transition: opacity 0.2s ease;
+            .modal-btn-primary {
+                width: 100%; background: #ffffff; color: #000000; border: none;
+                padding: 0.9rem; border-radius: 8px; font-size: 1rem; font-weight: 600;
+                cursor: pointer; box-sizing: border-box;
             }
-            .modal-submit-btn:hover { opacity: 0.9; }
-            @media (max-width: 680px) {
-                .modal-dashboard-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; height: 90vh; }
-                .modal-sidebar { flex-direction: row; padding: 1rem; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
-                .modal-main-view { padding: 1.5rem; }
-                .tab-btn { width: auto; padding: 0.5rem 0.75rem; }
-                .brand-meta { display: none !important; }
+            @media (max-width: 768px) {
+                .modal-dashboard-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; height: 85vh; }
+                .modal-sidebar { flex-direction: row; padding: 1rem; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); height:auto; }
+                .modal-main-content { padding: 2rem 1.5rem; }
+                .modal-sidebar-btn { width: auto; }
+                .sidebar-brand-title { display: none !important; }
+                #close-dashboard-btn { margin-top: 0 !important; width: auto !important; padding: 0.5rem 1rem !important; }
             }
         `;
         document.head.appendChild(styleTag);
@@ -101,26 +114,28 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (mode === 'signup' || mode === 'login') {
             overlay.innerHTML = `
-                <div class="modal-box-card">
-                    <button id="close-modal-x" style="position:absolute; top:1rem; right:1rem; background:none; border:none; color:#71717a; font-size:1.2rem; cursor:pointer; font-weight:700;">&times;</button>
-                    <h3 style="font-size: 1.6rem; margin-bottom: 0.4rem; font-weight:700;">${mode === 'signup' ? 'Create Account' : 'Welcome Back'}</h3>
-                    <p style="color:#a1a1aa; font-size:0.9rem; margin-bottom:1.5rem;">${mode === 'signup' ? 'Join HOUTS to deploy projects.' : 'Access your profile instance portal.'}</p>
-                    <form id="modal-form-action">
-                        <label style="display:block; font-size:0.8rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Email Address</label>
-                        <input type="email" id="modal-email" required class="modal-input">
-                        <label style="display:block; font-size:0.8rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Password</label>
-                        <input type="password" id="modal-password" required class="modal-input">
-                        <button type="submit" class="modal-submit-btn">${mode === 'signup' ? 'Sign Up' : 'Log In'}</button>
+                <div class="modal-login-card">
+                    <button id="close-login-modal" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: #71717a; font-size: 1.5rem; cursor: pointer; font-weight: 700;">&times;</button>
+                    <h3>${mode === 'signup' ? 'Create Account' : 'Welcome Back'}</h3>
+                    <p>${mode === 'signup' ? 'Join HOUTS to build your project for real.' : 'Log into your live profile dashboard.'}</p>
+                    <form id="modal-auth-form">
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Email Address</label>
+                        <input type="email" id="modal-auth-email" required class="modal-input-field">
+                        
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Password</label>
+                        <input type="password" id="modal-auth-password" required class="modal-input-field">
+                        
+                        <button type="submit" class="modal-btn-primary">${mode === 'signup' ? 'Sign Up' : 'Log In'}</button>
                     </form>
-                    <p style="margin-top:1.25rem; font-size:0.85rem; color:#71717a; text-align:center;">
-                        ${mode === 'signup' ? 'Already registered? <a href="#" id="modal-toggle-view" style="color:#ffffff; font-weight:600; text-decoration:none;">Log In</a>' : 'New to HOUTS? <a href="#" id="modal-toggle-view" style="color:#ffffff; font-weight:600; text-decoration:none;">Create Account</a>'}
+                    <p style="margin-top:1.2rem; font-size:0.85rem; margin-bottom:0; color:#71717a; text-align:center;">
+                        ${mode === 'signup' ? 'Already registered? <a href="#" id="change-modal-view" style="color:#ffffff; font-weight:600; text-decoration:none;">Log In</a>' : 'New to HOUTS? <a href="#" id="change-modal-view" style="color:#ffffff; font-weight:600; text-decoration:none;">Create Account</a>'}
                     </p>
                 </div>
             `;
-
-            document.getElementById('modal-form-action').addEventListener('submit', (e) => handleAuthSubmit(e, mode));
-            document.getElementById('close-modal-x').addEventListener('click', hideAuthModal);
-            document.getElementById('modal-toggle-view').addEventListener('click', (e) => {
+            
+            document.getElementById('modal-auth-form').addEventListener('submit', (e) => handleAuthSubmit(e, mode));
+            document.getElementById('close-login-modal').addEventListener('click', hideAuthModal);
+            document.getElementById('change-modal-view').addEventListener('click', (e) => {
                 e.preventDefault();
                 showAuthModal(mode === 'signup' ? 'login' : 'signup');
             });
@@ -129,92 +144,94 @@ document.addEventListener('DOMContentLoaded', () => {
             overlay.innerHTML = `
                 <div class="modal-dashboard-layout">
                     <div class="modal-sidebar">
-                        <div style="display:flex; flex-direction:column; gap:0.5rem; width:100%;">
-                            <div class="brand-meta" style="margin-bottom:1.25rem; padding-left:0.5rem;">
-                                <h2 style="font-size:1rem; font-weight:700; margin:0; letter-spacing:-0.3px;">HOUTS INSTANCE</h2>
-                                <p style="font-size:0.75rem; color:#71717a; margin:0;">Cloud Account Engine</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+                            <div class="sidebar-brand-title" style="margin-bottom: 1.5rem; padding-left: 0.5rem;">
+                                <h2 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #ffffff;">HOUTS CORE</h2>
+                                <p style="margin: 0; font-size: 0.75rem; color: #71717a;">Workspace Dashboard</p>
                             </div>
-                            <button id="tab-profile-trigger" class="tab-btn active">👤 Profile</button>
-                            <button id="tab-settings-trigger" class="tab-btn">⚙️ System</button>
+                            <button id="db-tab-profile" class="modal-sidebar-btn active">👤 Profile</button>
+                            <button id="db-tab-settings" class="modal-sidebar-btn">⚙️ Settings</button>
                         </div>
-                        <button id="modal-dashboard-close" style="background:#1a1a1e; color:#ffffff; border:1px solid rgba(255,255,255,0.08); padding:0.6rem; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; margin-top:1rem; width:100%;">Close Dashboard</button>
+                        <button id="close-dashboard-btn" style="background: #1a1a1e; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.08); padding: 0.7rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; width: 100%; margin-top: 1rem;">Close</button>
                     </div>
-                    <div class="modal-main-view">
-                        <div id="panel-profile-view" style="display:flex; flex-direction:column; gap:1.5rem;">
+
+                    <div class="modal-main-content">
+                        <div id="db-panel-profile" style="display: flex; flex-direction: column; gap: 1.5rem;">
                             <div>
-                                <h1 style="font-size:1.6rem; font-weight:700; margin:0 0 0.25rem 0;">Account Profile</h1>
-                                <p style="color:#a1a1aa; font-size:0.9rem; margin:0;">Manage and rewrite database username sync fields.</p>
+                                <h1 style="margin: 0 0 0.25rem 0; font-size: 1.75rem; font-weight: 700; color: #ffffff;">Profile Config</h1>
+                                <p style="margin: 0; font-size: 0.9rem; color: #a1a1aa;">Manage your database username profiles.</p>
                             </div>
-                            <hr style="border:0; border-top:1px solid rgba(255,255,255,0.06); margin:0;">
+                            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.06); margin: 0;">
                             <div>
-                                <p style="font-size:0.7rem; font-weight:600; color:#71717a; text-transform:uppercase; margin-bottom:0.25rem;">Active Username Handle</p>
-                                <span id="dash-username-display" style="font-size:1.15rem; font-weight:600; color:#ffffff;">Loading index...</span>
+                                <p style="margin: 0 0 0.2rem 0; font-size: 0.75rem; font-weight: 600; color: #71717a; text-transform: uppercase;">Current Username</p>
+                                <span id="db-username-text" style="font-size: 1.2rem; font-weight: 600; color: #ffffff;">Loading index...</span>
                             </div>
                             <div>
-                                <p style="font-size:0.7rem; font-weight:600; color:#71717a; text-transform:uppercase; margin-bottom:0.25rem;">User Account Core Email</p>
-                                <span style="font-size:1rem; color:#e4e4e7;">${user.email}</span>
+                                <p style="margin: 0 0 0.2rem 0; font-size: 0.75rem; font-weight: 600; color: #71717a; text-transform: uppercase;">Registered Email</p>
+                                <span style="font-size: 1rem; color: #e4e4e7;">${user.email}</span>
                             </div>
-                            <form id="dash-username-form" style="display:flex; flex-direction:column; gap:0.5rem; margin-top:0.5rem;">
-                                <label style="font-size:0.85rem; color:#e4e4e7;">Update Workspace Handle</label>
-                                <div style="display:flex; gap:0.5rem;">
-                                    <input type="text" id="dash-username-input" placeholder="Enter clean alphanumeric name" required style="flex:1; padding:0.6rem 1rem; background:#141416; border:1px solid rgba(255,255,255,0.08); border-radius:8px; color:#ffffff; outline:none;">
-                                    <button type="submit" id="dash-save-btn" style="background:#ffffff; color:#000000; border:none; padding:0 1.25rem; border-radius:8px; font-weight:600; cursor:pointer;">Save</button>
+                            <form id="db-username-form" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                                <label style="font-size:0.85rem; font-weight:500; color:#e4e4e7;">Change Username</label>
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                    <input type="text" id="db-username-input" placeholder="New username" required style="flex: 1; min-width: 160px; padding:0.65rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:#141416; color:#ffffff; outline:none; font-size:0.95rem;">
+                                    <button type="submit" id="db-username-save-btn" style="background:#ffffff; color:#000000; border:none; padding: 0 1.5rem; height: 38px; border-radius:8px; font-size:0.9rem; font-weight:600; cursor:pointer; white-space: nowrap;">Save</button>
                                 </div>
                             </form>
                         </div>
-                        <div id="panel-settings-view" style="display:none; flex-direction:column; gap:1.5rem;">
+
+                        <div id="db-panel-settings" style="display: none; flex-direction: column; gap: 1.5rem;">
                             <div>
-                                <h1 style="font-size:1.6rem; font-weight:700; margin:0 0 0.25rem 0;">System Context</h1>
-                                <p style="color:#a1a1aa; font-size:0.9rem; margin:0;">Cloud ecosystem node validations.</p>
+                                <h1 style="margin: 0 0 0.25rem 0; font-size: 1.75rem; font-weight: 700; color: #ffffff;">System Security</h1>
+                                <p style="margin: 0; font-size: 0.9rem; color: #a1a1aa;">Cloud network status trackers.</p>
                             </div>
-                            <hr style="border:0; border-top:1px solid rgba(255,255,255,0.06); margin:0;">
-                            <div style="background:#111113; padding:1rem; border-radius:10px; display:flex; justify-content:between; align-items:center; border:1px solid rgba(255,255,255,0.04);">
-                                <div style="flex:1;"><p style="margin:0; font-size:0.9rem; font-weight:600;">Ecosystem Routing Core</p></div>
-                                <span style="font-size:0.7rem; background:rgba(34,197,94,0.1); color:#22c55e; padding:0.25rem 0.5rem; border-radius:5px; font-weight:700;">SECURE NODE</span>
+                            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.06); margin: 0;">
+                            <div style="background: #111113; border: 1px solid rgba(255, 255, 255, 0.04); padding: 1rem; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                                <p style="margin: 0; font-weight: 500; font-size: 0.95rem; color: #ffffff;">Cloud Database Sync</p>
+                                <span style="font-size: 0.7rem; background: rgba(34, 197, 94, 0.1); color: #22c55e; padding: 0.25rem 0.6rem; border-radius: 5px; font-weight: 600; border: 1px solid rgba(34, 197, 94, 0.2);">ONLINE</span>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
 
-            // Read live handle
-            const userDisplayNode = document.getElementById('dash-username-display');
+            // Read username node
+            const textNode = document.getElementById('db-username-text');
             db.collection('users').doc(user.uid).get().then((doc) => {
-                userDisplayNode.textContent = (doc.exists && doc.data().username) ? doc.data().username : user.email.split('@')[0];
-            }).catch(() => { userDisplayNode.textContent = "Error sync node"; });
+                textNode.textContent = (doc.exists && doc.data().username) ? doc.data().username : user.email.split('@')[0];
+            }).catch(() => { textNode.textContent = "Error"; });
 
-            // Tab logic controls
-            const tProf = document.getElementById('tab-profile-trigger');
-            const tSet = document.getElementById('tab-settings-trigger');
-            const vProf = document.getElementById('panel-profile-view');
-            const vSet = document.getElementById('panel-settings-view');
+            // Tab toggling rules
+            const tabProf = document.getElementById('db-tab-profile');
+            const tabSet = document.getElementById('db-tab-settings');
+            const panelProf = document.getElementById('db-panel-profile');
+            const panelSet = document.getElementById('db-panel-settings');
 
-            tProf.addEventListener('click', () => {
-                tProf.classList.add('active'); tSet.classList.remove('active');
-                vProf.style.display = 'flex'; vSet.style.display = 'none';
+            tabProf.addEventListener('click', () => {
+                tabProf.classList.add('active'); tabSet.classList.remove('active');
+                panelProf.style.display = 'flex'; panelSet.style.display = 'none';
             });
-            tSet.addEventListener('click', () => {
-                tSet.classList.add('active'); tProf.classList.remove('active');
-                vProf.style.display = 'none'; vSet.style.display = 'flex';
+            tabSet.addEventListener('click', () => {
+                tabSet.classList.add('active'); tabProf.classList.remove('active');
+                panelProf.style.display = 'none'; panelSet.style.display = 'flex';
             });
 
-            document.getElementById('modal-dashboard-close').addEventListener('click', hideAuthModal);
+            document.getElementById('close-dashboard-btn').addEventListener('click', hideAuthModal);
 
-            // Write permanent custom handles
-            document.getElementById('dash-username-form').addEventListener('submit', (e) => {
+            // Save rules
+            document.getElementById('db-username-form').addEventListener('submit', (e) => {
                 e.preventDefault();
-                const newHandle = document.getElementById('dash-username-input').value.trim();
-                const saveBtn = document.getElementById('dash-save-btn');
+                const newName = document.getElementById('db-username-input').value.trim();
+                const saveBtn = document.getElementById('db-username-save-btn');
 
-                if (newHandle) {
+                if (newName) {
                     db.collection('users').doc(user.uid).set({
-                        username: newHandle,
+                        username: newName,
                         email: user.email,
                         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     }, { merge: true })
                     .then(() => {
-                        userDisplayNode.textContent = newHandle;
-                        document.getElementById('dash-username-input').value = '';
+                        textNode.textContent = newName;
+                        document.getElementById('db-username-input').value = '';
                         saveBtn.textContent = 'Saved! ✓'; saveBtn.style.background = '#22c55e'; saveBtn.style.color = '#ffffff';
                         setTimeout(() => { saveBtn.textContent = 'Save'; saveBtn.style.background = '#ffffff'; saveBtn.style.color = '#000000'; }, 2000);
                     });
@@ -234,11 +251,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- 3. RUN LIFECYCLE EVENT ACTIONS ---
     const handleAuthSubmit = (e, mode) => {
         e.preventDefault();
-        const email = document.getElementById('modal-email').value.trim();
-        const password = document.getElementById('modal-password').value;
+        const email = document.getElementById('modal-auth-email').value.trim();
+        const password = document.getElementById('modal-auth-password').value;
 
         if (mode === 'signup') {
             auth.createUserWithEmailAndPassword(email, password)
@@ -258,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- 4. NAVIGATION BAR CONTROLLER ---
+    // --- 3. BAR LINKS LISTENERS ---
     const navMenuContainer = document.querySelector('.nav-menu');
     let loginBtn = null, signupBtn = null;
 
