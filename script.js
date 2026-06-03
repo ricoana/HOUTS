@@ -124,7 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const switchSignup = document.getElementById('switch-to-signup');
             if (switchSignup) switchSignup.addEventListener('click', (e) => { e.preventDefault(); showAuthModal('signup'); });
         } else if (mode === 'account' && user) {
-            // Setup split layout panel dimensions
             modal.style.maxWidth = '580px';
             modal.style.padding = '0';
 
@@ -179,17 +178,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         <div id="m-panel-websites" style="display: none; flex-direction: column; gap: 1.2rem; width: 100%;">
                             <h4 style="margin: 0; font-size: 1.3rem; color: var(--text-main);">Your Active Websites</h4>
-                            <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">The following deployed domains are authorized to talk to your credentials:</p>
                             
-                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                <div style="background: rgba(255,255,255,0.5); border: 1px solid var(--glass-border); padding: 0.6rem 0.8rem; border-radius: 8px; font-family: monospace; font-size: 0.85rem; color: var(--text-main); display: flex; align-items: center; justify-content: space-between;">
-                                    <span>🌐 https://ricoana.github.io</span>
-                                    <span style="font-size: 0.7rem; background: #22c55e; color: white; padding: 0.15rem 0.4rem; border-radius: 4px; font-family: sans-serif; font-weight: bold;">LIVE</span>
-                                </div>
-                                <div style="background: rgba(255,255,255,0.5); border: 1px solid var(--glass-border); padding: 0.6rem 0.8rem; border-radius: 8px; font-family: monospace; font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between;">
-                                    <span>💻 http://localhost</span>
-                                    <span style="font-size: 0.7rem; background: var(--text-muted); color: white; padding: 0.15rem 0.4rem; border-radius: 4px; font-family: sans-serif; font-weight: bold;">DEV</span>
-                                </div>
+                            <div style="background: rgba(99, 102, 241, 0.04); border: 1px dashed var(--glass-border); padding: 1.5rem; border-radius: 16px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+                                <span style="font-size: 2rem;">🌐</span>
+                                <p style="margin: 0; font-weight: 600; font-size: 0.95rem; color: var(--text-main);">Secure Workspace Active</p>
+                                <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted); max-width: 240px; line-height: 1.4;">Your live web application domain is fully connected and authenticated with the HOUTS network.</p>
                             </div>
                         </div>
 
