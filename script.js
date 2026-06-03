@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const modal = document.createElement('div');
         modal.id = 'auth-modal-card';
         modal.style.cssText = `
-            display: block; width: 95%; max-width: 680px; border-radius: 16px;
+            display: block; width: 92%; max-width: 840px; border-radius: 16px;
             background: #121214; border: 1px solid rgba(255, 255, 255, 0.08); padding: 0;
             box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4); text-align: left;
             transform: scale(0.9); transition: transform 0.3s ease; position: relative;
@@ -123,77 +123,77 @@ document.addEventListener('DOMContentLoaded', () => {
             const switchSignup = document.getElementById('switch-to-signup');
             if (switchSignup) switchSignup.addEventListener('click', (e) => { e.preventDefault(); showAuthModal('signup'); });
         } else if (mode === 'account' && user) {
-            // Dark Dashboard Dimensions
-            modal.style.maxWidth = '680px';
+            // Expand the general framework modal container geometry
+            modal.style.maxWidth = '840px';
             modal.style.padding = '0';
 
             const currentUsername = user.displayName || user.email.split('@')[0];
 
             modal.innerHTML = `
-                <div style="display: flex; flex-direction: row; min-height: 420px; width: 100%; background: #121214;">
+                <div style="display: flex; flex-direction: row; min-height: 440px; width: 100%; background: #121214;">
                     
-                    <div style="width: 30%; background: #16161a; border-right: 1px solid rgba(255, 255, 255, 0.05); padding: 2rem 0.75rem; display: flex; flex-direction: column; justify-content: space-between;">
-                        <div style="display: flex; flex-direction: column; gap: 0.4rem;">
-                            <button id="modal-tab-profile" style="width: 100%; background: rgba(255, 255, 255, 0.06); color: #ffffff; border: none; padding: 0.7rem 1rem; border-radius: 8px; font-weight: 500; cursor: pointer; text-align: left; font-size: 0.9rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.6rem;">
-                                <span style="font-size: 1.1rem;">👤</span> Profile
+                    <div style="width: 240px; min-width: 240px; flex-shrink: 0; background: #16161a; border-right: 1px solid rgba(255, 255, 255, 0.05); padding: 2rem 1rem; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box;">
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+                            <button id="modal-tab-profile" style="width: 100%; background: rgba(255, 255, 255, 0.06); color: #ffffff; border: none; padding: 0.8rem 1.2rem; border-radius: 8px; font-weight: 500; cursor: pointer; text-align: left; font-size: 0.95rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.75rem; box-sizing: border-box; white-space: nowrap;">
+                                <span style="font-size: 1.1rem; line-height: 1;">👤</span> Profile
                             </button>
-                            <button id="modal-tab-settings" style="width: 100%; background: transparent; color: #a1a1aa; border: none; padding: 0.7rem 1rem; border-radius: 8px; font-weight: 500; cursor: pointer; text-align: left; font-size: 0.9rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.6rem;">
-                                <span style="font-size: 1.1rem;">⚙️</span> Settings
+                            <button id="modal-tab-settings" style="width: 100%; background: transparent; color: #a1a1aa; border: none; padding: 0.8rem 1.2rem; border-radius: 8px; font-weight: 500; cursor: pointer; text-align: left; font-size: 0.95rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.75rem; box-sizing: border-box; white-space: nowrap;">
+                                <span style="font-size: 1.1rem; line-height: 1;">⚙️</span> Settings
                             </button>
                         </div>
                         
-                        <button id="close-settings-modal" style="width: 100%; background: transparent; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 0.6rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: background 0.2s;">Close Menu</button>
+                        <button id="close-settings-modal" style="width: 100%; background: transparent; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 0.65rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background 0.2s; box-sizing: border-box; white-space: nowrap;">Close Menu</button>
                     </div>
 
-                    <div style="width: 70%; padding: 2.5rem 2.5rem; display: flex; flex-direction: column; justify-content: flex-start; background: #121214;">
+                    <div style="flex-grow: 1; padding: 2.5rem 3rem; display: flex; flex-direction: column; justify-content: flex-start; background: #121214; box-sizing: border-box; overflow-x: hidden;">
                         
-                        <div id="m-panel-profile" style="display: flex; flex-direction: column; gap: 1.5rem; width: 100%;">
+                        <div id="m-panel-profile" style="display: flex; flex-direction: column; gap: 1.75rem; width: 100%;">
                             <div>
-                                <h4 style="margin: 0 0 0.4rem 0; font-size: 1.4rem; font-weight: 600; color: #ffffff;">Profile Configuration</h4>
+                                <h4 style="margin: 0 0 0.4rem 0; font-size: 1.5rem; font-weight: 600; color: #ffffff;">Profile Configuration</h4>
                                 <p style="margin: 0; font-size: 0.85rem; color: #a1a1aa;">Manage your public facing developer handle settings.</p>
                             </div>
                             
-                            <div style="display: flex; flex-direction: column; gap: 1.2rem; margin-top: 0.5rem;">
+                            <div style="display: flex; flex-direction: column; gap: 1.4rem; margin-top: 0.5rem; width: 100%;">
                                 <div>
                                     <p style="margin: 0 0 0.3rem 0; font-size: 0.75rem; font-weight: 600; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px;">Current Public Name</p>
-                                    <span id="display-username-text" style="font-size: 1.1rem; font-weight: 600; color: #ffffff;">${currentUsername}</span>
+                                    <span id="display-username-text" style="font-size: 1.15rem; font-weight: 600; color: #ffffff;">${currentUsername}</span>
                                 </div>
                                 <div>
                                     <p style="margin: 0 0 0.3rem 0; font-size: 0.75rem; font-weight: 600; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px;">Account Email Address</p>
-                                    <span style="font-size: 1rem; font-weight: 400; color: #e4e4e7;">${user.email}</span>
+                                    <span style="font-size: 1.05rem; font-weight: 400; color: #e4e4e7;">${user.email}</span>
                                 </div>
                                 
-                                <form id="username-update-form" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                                <form id="username-update-form" style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.5rem; width: 100%; max-width: 480px;">
                                     <label style="font-size:0.85rem; font-weight:500; color:#e4e4e7;">Change Username</label>
-                                    <div style="display: flex; gap: 0.6rem;">
-                                        <input type="text" id="new-username-input" placeholder="Enter new username" required style="flex-grow: 1; padding:0.6rem 0.8rem; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:#1a1a1e; color:#ffffff; outline:none; font-size:0.95rem;">
-                                        <button type="submit" id="username-save-btn" style="background:#ffffff; color:#000000; border:none; padding:0 1.2rem; border-radius:8px; font-size:0.9rem; font-weight:600; cursor:pointer; white-space: nowrap; transition: background 0.2s;">Save</button>
+                                    <div style="display: flex; gap: 0.6rem; width: 100%;">
+                                        <input type="text" id="new-username-input" placeholder="Enter new username" required style="flex-grow: 1; padding:0.65rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:#1a1a1e; color:#ffffff; outline:none; font-size:0.95rem; min-width: 0;">
+                                        <button type="submit" id="username-save-btn" style="background:#ffffff; color:#000000; border:none; padding:0 1.5rem; border-radius:8px; font-size:0.9rem; font-weight:600; cursor:pointer; white-space: nowrap; transition: background 0.2s;">Save</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
 
-                        <div id="m-panel-settings" style="display: none; flex-direction: column; gap: 1.5rem; width: 100%;">
+                        <div id="m-panel-settings" style="display: none; flex-direction: column; gap: 1.75rem; width: 100%;">
                             <div>
-                                <h4 style="margin: 0 0 0.4rem 0; font-size: 1.4rem; font-weight: 600; color: #ffffff;">Account Settings</h4>
+                                <h4 style="margin: 0 0 0.4rem 0; font-size: 1.5rem; font-weight: 600; color: #ffffff;">Account Settings</h4>
                                 <p style="margin: 0; font-size: 0.85rem; color: #a1a1aa;">Configure your security pipeline preferences and cloud status.</p>
                             </div>
                             
-                            <div style="display: flex; flex-direction: column; gap: 1.2rem; margin-top: 0.5rem;">
-                                <div style="background: #1a1a1e; border: 1px solid rgba(255, 255, 255, 0.04); padding: 1rem 1.2rem; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; flex-direction: column; gap: 1.2rem; margin-top: 0.5rem; width: 100%;">
+                                <div style="background: #1a1a1e; border: 1px solid rgba(255, 255, 255, 0.04); padding: 1.2rem 1.5rem; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem;">
                                     <div>
-                                        <p style="margin: 0; font-weight: 500; font-size: 0.95rem; color: #ffffff;">Cloud Ecosystem State</p>
-                                        <p style="margin: 0; font-size: 0.8rem; color: #71717a;">Standard unrestricted node running.</p>
+                                        <p style="margin: 0 0 0.15rem 0; font-weight: 500; font-size: 1rem; color: #ffffff;">Cloud Ecosystem State</p>
+                                        <p style="margin: 0; font-size: 0.85rem; color: #71717a;">Standard unrestricted node running.</p>
                                     </div>
-                                    <span style="font-size: 0.75rem; background: rgba(34, 197, 94, 0.1); color: #22c55e; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 600; border: 1px solid rgba(34, 197, 94, 0.2);">ONLINE</span>
+                                    <span style="font-size: 0.75rem; background: rgba(34, 197, 94, 0.1); color: #22c55e; padding: 0.3rem 0.75rem; border-radius: 6px; font-weight: 600; border: 1px solid rgba(34, 197, 94, 0.2); white-space: nowrap;">ONLINE</span>
                                 </div>
 
-                                <div style="background: #1a1a1e; border: 1px solid rgba(255, 255, 255, 0.04); padding: 1rem 1.2rem; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                                <div style="background: #1a1a1e; border: 1px solid rgba(255, 255, 255, 0.04); padding: 1.2rem 1.5rem; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem;">
                                     <div>
-                                        <p style="margin: 0; font-weight: 500; font-size: 0.95rem; color: #ffffff;">Security Tokens</p>
-                                        <p style="margin: 0; font-size: 0.8rem; color: #71717a;">SSL cryptographic handshakes verified.</p>
+                                        <p style="margin: 0 0 0.15rem 0; font-weight: 500; font-size: 1rem; color: #ffffff;">Security Tokens</p>
+                                        <p style="margin: 0; font-size: 0.85rem; color: #71717a;">SSL cryptographic handshakes verified.</p>
                                     </div>
-                                    <span style="font-size: 0.75rem; background: rgba(99, 102, 241, 0.1); color: #818cf8; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 600; border: 1px solid rgba(99, 102, 241, 0.2);">ACTIVE</span>
+                                    <span style="font-size: 0.75rem; background: rgba(99, 102, 241, 0.1); color: #818cf8; padding: 0.3rem 0.75rem; border-radius: 6px; font-weight: 600; border: 1px solid rgba(99, 102, 241, 0.2); white-space: nowrap;">ACTIVE</span>
                                 </div>
                             </div>
                         </div>
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
 
-            // Dark Layout Tab Core Switching Engines Logic
+            // Layout Tab Core Switching Engines Logic
             const tabProfile = document.getElementById('modal-tab-profile');
             const tabSettings = document.getElementById('modal-tab-settings');
 
