@@ -51,21 +51,20 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.id = 'auth-modal-overlay';
         overlay.style.cssText = `
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(30, 27, 75, 0.2); backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px); z-index: 999;
+            background: rgba(10, 10, 12, 0.4); backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px); z-index: 999;
             display: flex; justify-content: center; align-items: center;
             opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         `;
 
         const modal = document.createElement('div');
         modal.id = 'auth-modal-card';
-        modal.className = 'dropdown-inner-card';
         modal.style.cssText = `
-            display: block; width: 95%; max-width: 580px; border-radius: 24px;
-            border: 1px solid var(--glass-border); padding: 0;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.08); text-align: left;
+            display: block; width: 95%; max-width: 680px; border-radius: 16px;
+            background: #121214; border: 1px solid rgba(255, 255, 255, 0.08); padding: 0;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4); text-align: left;
             transform: scale(0.9); transition: transform 0.3s ease; position: relative;
-            overflow: hidden;
+            overflow: hidden; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         `;
 
         overlay.appendChild(modal);
@@ -85,18 +84,18 @@ document.addEventListener('DOMContentLoaded', () => {
             modal.style.maxWidth = '400px';
             modal.style.padding = '2.5rem 2rem';
             modal.innerHTML = `
-                <h3 style="margin-top:0; font-size: 1.75rem; margin-bottom: 0.5rem;">Create Account</h3>
-                <p style="text-align:left; margin-bottom: 1.5rem;">Join HOUTS to build your project for real.</p>
+                <h3 style="margin-top:0; font-size: 1.75rem; margin-bottom: 0.5rem; color: #ffffff;">Create Account</h3>
+                <p style="text-align:left; margin-bottom: 1.5rem; color: #a1a1aa;">Join HOUTS to build your project for real.</p>
                 <form id="auth-form">
-                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:var(--text-main);">Email Address</label>
-                    <input type="email" id="auth-email" required style="width:100%; padding:0.8rem 1rem; border-radius:12px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.6); margin-bottom:1rem; outline:none; font-size:1rem;">
+                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Email Address</label>
+                    <input type="email" id="auth-email" required style="width:100%; padding:0.8rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1e; color:#ffffff; margin-bottom:1rem; outline:none; font-size:1rem;">
                     
-                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:var(--text-main);">Password</label>
-                    <input type="password" id="auth-password" required style="width:100%; padding:0.8rem 1rem; border-radius:12px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.6); margin-bottom:1.5rem; outline:none; font-size:1rem;">
+                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Password</label>
+                    <input type="password" id="auth-password" required style="width:100%; padding:0.8rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1e; color:#ffffff; margin-bottom:1.5rem; outline:none; font-size:1rem;">
                     
-                    <button type="submit" style="width:100%; background:var(--primary); color:white; border:none; padding:0.9rem; border-radius:12px; font-size:1rem; font-weight:600; cursor:pointer;">Sign Up</button>
+                    <button type="submit" style="width:100%; background:#ffffff; color:#000000; border:none; padding:0.9rem; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer;">Sign Up</button>
                 </form>
-                <p style="margin-top:1.2rem; font-size:0.85rem; margin-bottom:0; color:var(--text-muted);">Already registered? <a href="#" id="switch-to-login" style="color:var(--primary); font-weight:600; text-decoration:none;">Log In</a></p>
+                <p style="margin-top:1.2rem; font-size:0.85rem; margin-bottom:0; color:#71717a;">Already registered? <a href="#" id="switch-to-login" style="color:#ffffff; font-weight:600; text-decoration:none;">Log In</a></p>
             `;
             document.getElementById('auth-form').addEventListener('submit', (e) => handleAuthSubmit(e, mode));
             
@@ -106,83 +105,96 @@ document.addEventListener('DOMContentLoaded', () => {
             modal.style.maxWidth = '400px';
             modal.style.padding = '2.5rem 2rem';
             modal.innerHTML = `
-                <h3 style="margin-top:0; font-size: 1.75rem; margin-bottom: 0.5rem;">Welcome Back</h3>
-                <p style="text-align:left; margin-bottom: 1.5rem;">Log into your live profile dashboard.</p>
+                <h3 style="margin-top:0; font-size: 1.75rem; margin-bottom: 0.5rem; color:#ffffff;">Welcome Back</h3>
+                <p style="text-align:left; margin-bottom: 1.5rem; color:#a1a1aa;">Log into your live profile dashboard.</p>
                 <form id="auth-form">
-                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:var(--text-main);">Email Address</label>
-                    <input type="email" id="auth-email" required style="width:100%; padding:0.8rem 1rem; border-radius:12px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.6); margin-bottom:1rem; outline:none; font-size:1rem;">
+                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Email Address</label>
+                    <input type="email" id="auth-email" required style="width:100%; padding:0.8rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1e; color:#ffffff; margin-bottom:1rem; outline:none; font-size:1rem;">
                     
-                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:var(--text-main);">Password</label>
-                    <input type="password" id="auth-password" required style="width:100%; padding:0.8rem 1rem; border-radius:12px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.6); margin-bottom:1.5rem; outline:none; font-size:1rem;">
+                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Password</label>
+                    <input type="password" id="auth-password" required style="width:100%; padding:0.8rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1e; color:#ffffff; margin-bottom:1.5rem; outline:none; font-size:1rem;">
                     
-                    <button type="submit" style="width:100%; background:var(--primary); color:white; border:none; padding:0.9rem; border-radius:12px; font-size:1rem; font-weight:600; cursor:pointer;">Log In</button>
+                    <button type="submit" style="width:100%; background:#ffffff; color:#000000; border:none; padding:0.9rem; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer;">Log In</button>
                 </form>
-                <p style="margin-top:1.2rem; font-size:0.85rem; margin-bottom:0; color:var(--text-muted);">New to HOUTS? <a href="#" id="switch-to-signup" style="color:var(--primary); font-weight:600; text-decoration:none;">Create Account</a></p>
+                <p style="margin-top:1.2rem; font-size:0.85rem; margin-bottom:0; color:#71717a;">New to HOUTS? <a href="#" id="switch-to-signup" style="color:#ffffff; font-weight:600; text-decoration:none;">Create Account</a></p>
             `;
             document.getElementById('auth-form').addEventListener('submit', (e) => handleAuthSubmit(e, mode));
             
             const switchSignup = document.getElementById('switch-to-signup');
             if (switchSignup) switchSignup.addEventListener('click', (e) => { e.preventDefault(); showAuthModal('signup'); });
         } else if (mode === 'account' && user) {
-            modal.style.maxWidth = '580px';
+            // Dark Dashboard Dimensions
+            modal.style.maxWidth = '680px';
             modal.style.padding = '0';
 
             const currentUsername = user.displayName || user.email.split('@')[0];
 
             modal.innerHTML = `
-                <div style="display: flex; flex-direction: row; min-height: 360px; width: 100%;">
+                <div style="display: flex; flex-direction: row; min-height: 420px; width: 100%; background: #121214;">
                     
-                    <div style="width: 35%; background: rgba(255,255,255,0.4); border-right: 1px solid var(--glass-border); padding: 2rem 0.75rem; display: flex; flex-direction: column; gap: 0.6rem;">
-                        <button id="modal-tab-profile" style="width: 100%; background: var(--primary); color: white; border: none; padding: 0.75rem 1rem; border-radius: 12px; font-weight: 600; cursor: pointer; text-align: left; font-size: 0.85rem; transition: all 0.2s;">
-                            👤 Profile Settings
-                        </button>
-                        <button id="modal-tab-subscription" style="width: 100%; background: transparent; color: var(--text-main); border: none; padding: 0.75rem 1rem; border-radius: 12px; font-weight: 600; cursor: pointer; text-align: left; font-size: 0.85rem; transition: all 0.2s;">
-                            💳 Subscription
-                        </button>
-                        <button id="modal-tab-websites" style="width: 100%; background: transparent; color: var(--text-main); border: none; padding: 0.75rem 1rem; border-radius: 12px; font-weight: 600; cursor: pointer; text-align: left; font-size: 0.85rem; transition: all 0.2s;">
-                            🌐 Your Websites
-                        </button>
+                    <div style="width: 30%; background: #16161a; border-right: 1px solid rgba(255, 255, 255, 0.05); padding: 2rem 0.75rem; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                            <button id="modal-tab-profile" style="width: 100%; background: rgba(255, 255, 255, 0.06); color: #ffffff; border: none; padding: 0.7rem 1rem; border-radius: 8px; font-weight: 500; cursor: pointer; text-align: left; font-size: 0.9rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.6rem;">
+                                <span style="font-size: 1.1rem;">👤</span> Profile
+                            </button>
+                            <button id="modal-tab-settings" style="width: 100%; background: transparent; color: #a1a1aa; border: none; padding: 0.7rem 1rem; border-radius: 8px; font-weight: 500; cursor: pointer; text-align: left; font-size: 0.9rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.6rem;">
+                                <span style="font-size: 1.1rem;">⚙️</span> Settings
+                            </button>
+                        </div>
                         
-                        <button id="close-settings-modal" style="width:calc(100% - 1.5rem); background:var(--text-main); color:white; border:none; padding:0.65rem; border-radius:10px; font-size:0.8rem; font-weight:600; cursor:pointer; position: absolute; bottom: 1.5rem; left: 0.75rem;">Close Menu</button>
+                        <button id="close-settings-modal" style="width: 100%; background: transparent; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 0.6rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: background 0.2s;">Close Menu</button>
                     </div>
 
-                    <div style="width: 65%; padding: 2.5rem 2rem; display: flex; flex-direction: column; justify-content: flex-start;">
+                    <div style="width: 70%; padding: 2.5rem 2.5rem; display: flex; flex-direction: column; justify-content: flex-start; background: #121214;">
                         
-                        <div id="m-panel-profile" style="display: flex; flex-direction: column; gap: 1.2rem; width: 100%;">
-                            <h4 style="margin: 0; font-size: 1.3rem; color: var(--text-main);">Profile Settings</h4>
+                        <div id="m-panel-profile" style="display: flex; flex-direction: column; gap: 1.5rem; width: 100%;">
                             <div>
-                                <p style="margin: 0 0 0.2rem 0; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Current Username</p>
-                                <span id="display-username-text" style="font-size: 1.1rem; font-weight: 600; color: var(--primary);">${currentUsername}</span>
+                                <h4 style="margin: 0 0 0.4rem 0; font-size: 1.4rem; font-weight: 600; color: #ffffff;">Profile Configuration</h4>
+                                <p style="margin: 0; font-size: 0.85rem; color: #a1a1aa;">Manage your public facing developer handle settings.</p>
                             </div>
-                            <div>
-                                <p style="margin: 0 0 0.2rem 0; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Registered Email</p>
-                                <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-main);">${user.email}</span>
-                            </div>
-                            <form id="username-update-form" style="display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.2rem;">
-                                <label style="font-size:0.8rem; font-weight:600; color:var(--text-main);">Update Username</label>
-                                <div style="display: flex; gap: 0.5rem;">
-                                    <input type="text" id="new-username-input" placeholder="New username" required style="width: 100%; padding:0.5rem 0.8rem; border-radius:10px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.6); outline:none; font-size:0.9rem;">
-                                    <button type="submit" id="username-save-btn" style="background:var(--primary); color:white; border:none; padding:0 0.8rem; border-radius:10px; font-size:0.85rem; font-weight:600; cursor:pointer; white-space: nowrap;">Save</button>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div id="m-panel-subscription" style="display: none; flex-direction: column; gap: 1.2rem; width: 100%;">
-                            <h4 style="margin: 0; font-size: 1.3rem; color: var(--text-main);">Subscription Management</h4>
-                            <div style="background: rgba(99, 102, 241, 0.08); border: 1px dashed var(--primary); padding: 1rem; border-radius: 12px;">
-                                <p style="margin: 0 0 0.2rem 0; font-size: 0.7rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;">Active Tier Plan</p>
-                                <span style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">HOUTS Standard Free Tier</span>
-                            </div>
-                            <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">Your cloud sync permissions are unrestricted. Premium enterprise pipeline options will appear here once upgrades become available.</p>
-                        </div>
-
-                        <div id="m-panel-websites" style="display: none; flex-direction: column; gap: 1.2rem; width: 100%;">
-                            <h4 style="margin: 0; font-size: 1.3rem; color: var(--text-main);">Your Active Websites</h4>
                             
-                            <div style="background: rgba(99, 102, 241, 0.04); border: 1px dashed var(--glass-border); padding: 1.5rem; border-radius: 16px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
-                                <span style="font-size: 2rem;">🌐</span>
-                                <p style="margin: 0; font-weight: 600; font-size: 0.95rem; color: var(--text-main);">Secure Workspace Active</p>
-                                <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted); max-width: 240px; line-height: 1.4;">Your live web application domain is fully connected and authenticated with the HOUTS network.</p>
+                            <div style="display: flex; flex-direction: column; gap: 1.2rem; margin-top: 0.5rem;">
+                                <div>
+                                    <p style="margin: 0 0 0.3rem 0; font-size: 0.75rem; font-weight: 600; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px;">Current Public Name</p>
+                                    <span id="display-username-text" style="font-size: 1.1rem; font-weight: 600; color: #ffffff;">${currentUsername}</span>
+                                </div>
+                                <div>
+                                    <p style="margin: 0 0 0.3rem 0; font-size: 0.75rem; font-weight: 600; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px;">Account Email Address</p>
+                                    <span style="font-size: 1rem; font-weight: 400; color: #e4e4e7;">${user.email}</span>
+                                </div>
+                                
+                                <form id="username-update-form" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                                    <label style="font-size:0.85rem; font-weight:500; color:#e4e4e7;">Change Username</label>
+                                    <div style="display: flex; gap: 0.6rem;">
+                                        <input type="text" id="new-username-input" placeholder="Enter new username" required style="flex-grow: 1; padding:0.6rem 0.8rem; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:#1a1a1e; color:#ffffff; outline:none; font-size:0.95rem;">
+                                        <button type="submit" id="username-save-btn" style="background:#ffffff; color:#000000; border:none; padding:0 1.2rem; border-radius:8px; font-size:0.9rem; font-weight:600; cursor:pointer; white-space: nowrap; transition: background 0.2s;">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div id="m-panel-settings" style="display: none; flex-direction: column; gap: 1.5rem; width: 100%;">
+                            <div>
+                                <h4 style="margin: 0 0 0.4rem 0; font-size: 1.4rem; font-weight: 600; color: #ffffff;">Account Settings</h4>
+                                <p style="margin: 0; font-size: 0.85rem; color: #a1a1aa;">Configure your security pipeline preferences and cloud status.</p>
+                            </div>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 1.2rem; margin-top: 0.5rem;">
+                                <div style="background: #1a1a1e; border: 1px solid rgba(255, 255, 255, 0.04); padding: 1rem 1.2rem; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <p style="margin: 0; font-weight: 500; font-size: 0.95rem; color: #ffffff;">Cloud Ecosystem State</p>
+                                        <p style="margin: 0; font-size: 0.8rem; color: #71717a;">Standard unrestricted node running.</p>
+                                    </div>
+                                    <span style="font-size: 0.75rem; background: rgba(34, 197, 94, 0.1); color: #22c55e; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 600; border: 1px solid rgba(34, 197, 94, 0.2);">ONLINE</span>
+                                </div>
+
+                                <div style="background: #1a1a1e; border: 1px solid rgba(255, 255, 255, 0.04); padding: 1rem 1.2rem; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <p style="margin: 0; font-weight: 500; font-size: 0.95rem; color: #ffffff;">Security Tokens</p>
+                                        <p style="margin: 0; font-size: 0.8rem; color: #71717a;">SSL cryptographic handshakes verified.</p>
+                                    </div>
+                                    <span style="font-size: 0.75rem; background: rgba(99, 102, 241, 0.1); color: #818cf8; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 600; border: 1px solid rgba(99, 102, 241, 0.2);">ACTIVE</span>
+                                </div>
                             </div>
                         </div>
 
@@ -190,47 +202,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
 
-            // Core Tab Switching Mechanics Logic
+            // Dark Layout Tab Core Switching Engines Logic
             const tabProfile = document.getElementById('modal-tab-profile');
-            const tabSubscription = document.getElementById('modal-tab-subscription');
-            const tabWebsites = document.getElementById('modal-tab-websites');
+            const tabSettings = document.getElementById('modal-tab-settings');
 
             const pProfile = document.getElementById('m-panel-profile');
-            const pSubscription = document.getElementById('m-panel-subscription');
-            const pWebsites = document.getElementById('m-panel-websites');
+            const pSettings = document.getElementById('m-panel-settings');
 
             const clearTabs = () => {
-                [tabProfile, tabSubscription, tabWebsites].forEach(btn => {
+                [tabProfile, tabSettings].forEach(btn => {
                     btn.style.background = 'transparent';
-                    btn.style.color = 'var(--text-main)';
+                    btn.style.color = '#a1a1aa';
                 });
-                [pProfile, pSubscription, pWebsites].forEach(panel => {
+                [pProfile, pSettings].forEach(panel => {
                     panel.style.display = 'none';
                 });
             };
 
             tabProfile.addEventListener('click', () => {
                 clearTabs();
-                tabProfile.style.background = 'var(--primary)';
-                tabProfile.style.color = 'white';
+                tabProfile.style.background = 'rgba(255, 255, 255, 0.06)';
+                tabProfile.style.color = '#ffffff';
                 pProfile.style.display = 'flex';
             });
 
-            tabSubscription.addEventListener('click', () => {
+            tabSettings.addEventListener('click', () => {
                 clearTabs();
-                tabSubscription.style.background = 'var(--primary)';
-                tabSubscription.style.color = 'white';
-                pSubscription.style.display = 'flex';
+                tabSettings.style.background = 'rgba(255, 255, 255, 0.06)';
+                tabSettings.style.color = '#ffffff';
+                pSettings.style.display = 'flex';
             });
 
-            tabWebsites.addEventListener('click', () => {
-                clearTabs();
-                tabWebsites.style.background = 'var(--primary)';
-                tabWebsites.style.color = 'white';
-                pWebsites.style.display = 'flex';
-            });
-
-            document.getElementById('close-settings-modal').addEventListener('click', hideAuthModal);
+            const closeBtn = document.getElementById('close-settings-modal');
+            closeBtn.addEventListener('mouseenter', () => closeBtn.style.background = 'rgba(239, 68, 68, 0.1)');
+            closeBtn.addEventListener('mouseleave', () => closeBtn.style.background = 'transparent');
+            closeBtn.addEventListener('click', hideAuthModal);
 
             // Live Update Display Name Form Submission Task
             document.getElementById('username-update-form').addEventListener('submit', (e) => {
@@ -247,9 +253,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         saveBtn.textContent = 'Saved! ✓';
                         saveBtn.style.background = '#22c55e';
+                        saveBtn.style.color = '#ffffff';
                         setTimeout(() => {
                             saveBtn.textContent = 'Save';
-                            saveBtn.style.background = 'var(--primary)';
+                            saveBtn.style.background = '#ffffff';
+                            saveBtn.style.color = '#000000';
                         }, 2000);
                     }).catch((error) => {
                         alert(error.message);
