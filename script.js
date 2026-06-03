@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
             navMenu.classList.toggle('active');
         });
 
-        // Use event delegation or adjust to handle dynamic menu items
         navMenu.addEventListener('click', (e) => {
             if (e.target.tagName === 'A') {
                 menuToggle.classList.remove('active');
@@ -120,29 +119,66 @@ document.addEventListener('DOMContentLoaded', () => {
             const switchSignup = document.getElementById('switch-to-signup');
             if (switchSignup) switchSignup.addEventListener('click', (e) => { e.preventDefault(); showAuthModal('signup'); });
         } else if (mode === 'account' && user) {
-            // New dedicated popup menu for Settings & Account
+            // Get current username or fall back to email prefix
+            const currentUsername = user.displayName || user.email.split('@')[0];
+
             modal.innerHTML = `
                 <h3 style="margin-top:0; font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-main);">Account Settings</h3>
-                <p style="text-align:left; margin-bottom: 1.5rem; color: var(--text-muted);">Manage your verified HOUTS profile credentials.</p>
+                <p style="text-align:left; margin-bottom: 1.5rem; color: var(--text-muted);">View and manage your HOUTS user details.</p>
                 
                 <div style="display: flex; flex-direction: column; gap: 1.2rem;">
                     <div>
-                        <p style="margin: 0 0 0.2rem 0; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Registered Email</p>
-                        <span style="font-size: 0.95rem; font-weight: 600; color: var(--text-main);">${user.email}</span>
+                        <p style="margin: 0 0 0.2rem 0; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Current Username</p>
+                        <span id="display-username-text" style="font-size: 1.1rem; font-weight: 600; color: var(--primary);">${currentUsername}</span>
                     </div>
+
                     <div>
-                        <p style="margin: 0 0 0.2rem 0; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Firebase User ID</p>
-                        <span style="font-size: 0.8rem; word-break: break-all; font-family: monospace; background: rgba(0,0,0,0.05); padding: 0.4rem 0.6rem; border-radius: 8px; color: var(--text-main); display: block;">${user.uid}</span>
+                        <p style="margin: 0 0 0.2rem 0; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Registered Email</p>
+                        <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-main);">${user.email}</span>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
-                        <span style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px #22c55e;"></span>
-                        <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Security Handshake Active</span>
-                    </div>
+
+                    <hr style="border:none; border-top: 1px solid var(--glass-border); margin: 0.5rem 0;">
+
+                    <form id="username-update-form" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                        <label style="font-size:0.85rem; font-weight:600; color:var(--text-main);">Change Username</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="text" id="new-username-input" placeholder="Enter new username" required style="flex-grow: 1; padding:0.6rem 1rem; border-radius:12px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.6); outline:none; font-size:0.95rem;">
+                            <button type="submit" id="username-save-btn" style="background:var(--primary); color:white; border:none; padding:0 1rem; border-radius:12px; font-size:0.9rem; font-weight:600; cursor:pointer;">Update</button>
+                        </div>
+                    </form>
                 </div>
                 
                 <button id="close-settings-modal" style="width:100%; background:var(--text-main); color:white; border:none; padding:0.8rem; border-radius:12px; font-size:0.95rem; font-weight:600; cursor:pointer; margin-top: 1.5rem;">Close Settings</button>
             `;
+
             document.getElementById('close-settings-modal').addEventListener('click', hideAuthModal);
+
+            // Handle the submission of the username change
+            document.getElementById('username-update-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newUsername = document.getElementById('new-username-input').value.trim();
+                const saveBtn = document.getElementById('username-save-btn');
+
+                if (newUsername) {
+                    user.updateProfile({
+                        displayName: newUsername
+                    }).then(() => {
+                        // Dynamically update the text in the modal right away
+                        document.getElementById('display-username-text').textContent = newUsername;
+                        document.getElementById('new-username-input').value = '';
+                        
+                        // Visual success indicator on button
+                        saveBtn.textContent = 'Updated! ✓';
+                        saveBtn.style.background = '#22c55e';
+                        setTimeout(() => {
+                            saveBtn.textContent = 'Update';
+                            saveBtn.style.background = 'var(--primary)';
+                        }, 2000);
+                    }).catch((error) => {
+                        alert(error.message);
+                    });
+                }
+            });
         }
 
         overlay.style.opacity = '1';
@@ -191,19 +227,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     auth.onAuthStateChanged((user) => {
-        // Clean up dynamic links first to avoid duplicates
         const dynamicSettings = document.getElementById('settings-menu-btn');
         const dynamicLogout = document.getElementById('logout-btn');
         if (dynamicSettings) dynamicSettings.remove();
         if (dynamicLogout) dynamicLogout.remove();
 
         if (user) {
-            // Hide standard links
             if (loginBtn) loginBtn.style.display = 'none';
             if (signupBtn) signupBtn.style.display = 'none';
 
             if (navMenuContainer) {
-                // 1. Inject the Account Settings popup trigger link into navigation dropdown menu
+                // 1. Inject Account Settings link
                 const settingsBtn = document.createElement('a');
                 settingsBtn.id = 'settings-menu-btn';
                 settingsBtn.href = '#';
@@ -221,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 logoutBtn.href = '#';
                 logoutBtn.textContent = 'Logout';
                 logoutBtn.style.cursor = 'pointer';
-                logoutBtn.style.color = '#ef4444'; // Subtle red color accent for logout
+                logoutBtn.style.color = '#ef4444';
                 logoutBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     auth.signOut().then(() => window.location.reload());
@@ -229,7 +263,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 navMenuContainer.appendChild(logoutBtn);
             }
         } else {
-            // Restore default views
             if (loginBtn) loginBtn.style.display = 'block';
             if (signupBtn) signupBtn.style.display = 'block';
         }
