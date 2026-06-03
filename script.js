@@ -196,21 +196,110 @@ document.addEventListener('DOMContentLoaded', () => {
     if (signupBtn) signupBtn.addEventListener('click', (e) => { e.preventDefault(); showAuthModal('signup'); });
     if (loginBtn) loginBtn.addEventListener('click', (e) => { e.preventDefault(); showAuthModal('login'); });
 
+    // --- 5. NEW CUSTOM SETTINGS TAB DASHBOARD PANEL ENGINE ---
     const renderProfileDashboard = (user) => {
         if (!heroContent) return;
 
         const username = user.email.split('@')[0];
 
+        // Clean layout container for settings dashboard
         heroContent.innerHTML = `
-            <h1>Welcome Back, <span>${username}!</span></h1>
-            <p class="hero-subtitle">Turn your concept into a dot-com.</p>
+            <h1 style="font-size: 2.8rem; margin-bottom: 0.5rem;">Welcome Back, <span>${username}!</span></h1>
+            <p class="hero-subtitle" style="margin-bottom: 2rem;">Manage your live cloud configuration and workspace.</p>
             
-            <div class="dropdown-inner-card" style="display: block; border-radius: 16px; border: 1px solid var(--glass-border); padding: 1.5rem 2rem; width: 100%; max-width: 400px; text-align: left; margin-top: 1rem;">
-                <h3 style="margin-top: 0; margin-bottom: 1rem;">Verified HOUTS Profile</h3>
-                <p style="margin-bottom: 0.5rem;"><strong>Firebase User ID:</strong> <span style="font-size:0.75rem; word-break:break-all;">${user.uid}</span></p>
-                <p style="margin-bottom: 0.5rem;"><strong>Email:</strong> ${user.email}</p>
-                <p style="margin-bottom: 0;"><strong>Security Status:</strong> Account Verified</p>
+            <div class="dropdown-inner-card" style="display: flex; flex-direction: row; border-radius: 24px; border: 1px solid var(--glass-border); padding: 0; width: 100%; max-width: 680px; text-align: left; overflow: hidden; box-shadow: var(--glass-shadow); min-height: 340px;">
+                
+                <div style="width: 30%; background: rgba(255,255,255,0.3); border-right: 1px solid var(--glass-border); padding: 1.5rem 0.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                    <button id="tab-btn-profile" class="active-tab" style="width: 100%; background: var(--primary); color: white; border: none; padding: 0.75rem 1rem; border-radius: 12px; font-weight: 600; cursor: pointer; text-align: left; font-size: 0.9rem; transition: all 0.2s;">
+                        👤 Profile
+                    </button>
+                    <button id="tab-btn-settings" style="width: 100%; background: transparent; color: var(--text-main); border: none; padding: 0.75rem 1rem; border-radius: 12px; font-weight: 600; cursor: pointer; text-align: left; font-size: 0.9rem; transition: all 0.2s;">
+                        ⚙️ Preferences
+                    </button>
+                </div>
+
+                <div style="width: 70%; padding: 2rem; display: flex; flex-direction: column; justify-content: flex-start; position: relative;">
+                    
+                    <div id="panel-profile" style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
+                        <h3 style="margin: 0; font-size: 1.3rem; color: var(--text-main);">Verified HOUTS Developer Profile</h3>
+                        <hr style="border: none; border-top: 1px solid var(--glass-border); margin: 0.2rem 0;">
+                        <div>
+                            <p style="margin: 0 0 0.2rem 0; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">User ID Reference</p>
+                            <span style="font-size: 0.85rem; word-break: break-all; font-family: monospace; background: rgba(0,0,0,0.05); padding: 0.3rem 0.6rem; border-radius: 6px; color: var(--text-main); display: block;">${user.uid}</span>
+                        </div>
+                        <div>
+                            <p style="margin: 0 0 0.2rem 0; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Connected Cloud Database</p>
+                            <span style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">${user.email}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+                            <span style="width: 10px; height: 10px; background: #22c55e; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px #22c55e;"></span>
+                            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Security Engine Handshake Verified</span>
+                        </div>
+                    </div>
+
+                    <div id="panel-settings" style="display: none; flex-direction: column; gap: 1.2rem; width: 100%;">
+                        <h3 style="margin: 0; font-size: 1.3rem; color: var(--text-main);">Workspace Preferences</h3>
+                        <hr style="border: none; border-top: 1px solid var(--glass-border); margin: 0.2rem 0;">
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <p style="margin: 0; font-weight: 600; font-size: 0.95rem; color: var(--text-main);">Interface Optimization</p>
+                                <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">Toggle dark contrast backdrop canvas rules.</p>
+                            </div>
+                            <input type="checkbox" id="pref-dark" style="width: 40px; height: 20px; cursor: pointer; accent-color: var(--primary);">
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <p style="margin: 0; font-weight: 600; font-size: 0.95rem; color: var(--text-main);">Cloud Communications</p>
+                                <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">Receive git build alerts and webhook pings.</p>
+                            </div>
+                            <input type="checkbox" id="pref-notify" checked style="width: 40px; height: 20px; cursor: pointer; accent-color: var(--primary);">
+                        </div>
+
+                        <button id="save-settings-btn" style="margin-top: 0.5rem; background: var(--text-main); color: white; border: none; padding: 0.7rem 1.2rem; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.85rem; align-self: flex-start; transition: opacity 0.2s;">
+                            Save Changes
+                        </button>
+                    </div>
+
+                </div>
             </div>
         `;
+
+        // Interactive UI Tab Controller Elements Logic Setup
+        const btnProfile = document.getElementById('tab-btn-profile');
+        const btnSettings = document.getElementById('tab-btn-settings');
+        const panelProfile = document.getElementById('panel-profile');
+        const panelSettings = document.getElementById('panel-settings');
+        const saveBtn = document.getElementById('save-settings-btn');
+
+        // Tab Switching Event Actions
+        btnProfile.addEventListener('click', () => {
+            panelProfile.style.display = 'flex';
+            panelSettings.style.display = 'none';
+            btnProfile.style.background = 'var(--primary)';
+            btnProfile.style.color = 'white';
+            btnSettings.style.background = 'transparent';
+            btnSettings.style.color = 'var(--text-main)';
+        });
+
+        btnSettings.addEventListener('click', () => {
+            panelProfile.style.display = 'none';
+            panelSettings.style.display = 'flex';
+            btnSettings.style.background = 'var(--primary)';
+            btnSettings.style.color = 'white';
+            btnProfile.style.background = 'transparent';
+            btnProfile.style.color = 'var(--text-main)';
+        });
+
+        // Simulating functional preference adjustments state notifications
+        saveBtn.addEventListener('click', () => {
+            saveBtn.textContent = 'Saved Successfully! ✓';
+            saveBtn.style.background = '#22c55e';
+            setTimeout(() => {
+                saveBtn.textContent = 'Save Changes';
+                saveBtn.style.background = 'var(--text-main)';
+            }, 2000);
+        });
     };
 });
