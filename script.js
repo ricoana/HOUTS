@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .modal-login-card h3 { margin: 0 0 0.5rem 0; font-size: 1.75rem; color: #ffffff; font-weight:700; text-align:left; letter-spacing: -0.5px;}
             .modal-login-card p { text-align:left; margin: 0 0 1.5rem 0; color: #a1a1aa; font-size: 0.95rem; }
             
+            /* Desktop Layout Configuration */
             .modal-dashboard-layout {
                 display: grid; grid-template-columns: 240px minmax(0, 1fr);
                 width: 90%; max-width: 840px; height: 80vh; max-height: 580px;
@@ -94,13 +95,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 cursor: pointer; box-sizing: border-box; transition: opacity 0.2s;
             }
             .modal-btn-primary:hover { opacity: 0.95; }
+
+            .close-icon-btn {
+                position: absolute; top: 1.5rem; right: 1.5rem; background: none; 
+                border: none; color: #71717a; font-size: 1.5rem; cursor: pointer; 
+                font-weight: 400; transition: color 0.2s; z-index: 10;
+            }
+            .close-icon-btn:hover { color: #ffffff; }
+
+            /* Mobile Viewport Overhaul — Full Screen Mode */
             @media (max-width: 768px) {
-                .modal-dashboard-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; height: 85vh; }
-                .modal-sidebar { flex-direction: row; padding: 1rem; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); height:auto; }
-                .modal-main-content { padding: 2rem 1.5rem; }
-                .modal-sidebar-btn { width: auto; }
+                #auth-modal-overlay { padding: 0; }
+                .modal-dashboard-layout { 
+                    grid-template-columns: 1fr; 
+                    grid-template-rows: auto 1fr; 
+                    width: 100vw; 
+                    height: 100vh; 
+                    max-height: 100vh; 
+                    border-radius: 0; 
+                    border: none; 
+                }
+                .modal-sidebar { 
+                    flex-direction: row; 
+                    padding: 3.5rem 1.5rem 1rem 1.5rem; 
+                    border-right: none; 
+                    border-bottom: 1px solid rgba(255,255,255,0.05); 
+                    height: auto; 
+                    align-items: center;
+                    gap: 1rem;
+                }
+                .modal-main-content { padding: 2.5rem 1.5rem; }
+                .modal-sidebar-btn { width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; }
                 .sidebar-brand-title { display: none !important; }
-                #close-dashboard-btn { margin-top: 0 !important; width: auto !important; padding: 0.5rem 1rem !important; }
             }
         `;
         document.head.appendChild(styleTag);
@@ -117,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mode === 'signup' || mode === 'login') {
             overlay.innerHTML = `
                 <div class="modal-login-card">
-                    <button id="close-login-modal" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: #71717a; font-size: 1.5rem; cursor: pointer; font-weight: 700;">&times;</button>
+                    <button id="close-login-modal" class="close-icon-btn">&times;</button>
                     <h3>${mode === 'signup' ? 'Create Account' : 'Welcome Back'}</h3>
                     <p>${mode === 'signup' ? 'Join HOUTS to build your project for real.' : 'Log into your live profile dashboard.'}</p>
                     <form id="modal-auth-form">
@@ -145,8 +171,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (mode === 'account' && user) {
             overlay.innerHTML = `
                 <div class="modal-dashboard-layout">
+                    <button id="close-dashboard-btn" class="close-icon-btn" aria-label="Close Dashboard">&times;</button>
+                    
                     <div class="modal-sidebar">
-                        <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; flex-direction: inherit;">
                             <div class="sidebar-brand-title" style="margin-bottom: 1.5rem; padding-left: 0.5rem;">
                                 <h2 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #ffffff; letter-spacing:-0.3px;">HOUTS CORE</h2>
                                 <p style="margin: 0; font-size: 0.75rem; color: #71717a;">Workspace Dashboard</p>
@@ -154,7 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             <button id="db-tab-profile" class="modal-sidebar-btn active">👤 Profile</button>
                             <button id="db-tab-settings" class="modal-sidebar-btn">⚙️ Settings</button>
                         </div>
-                        <button id="close-dashboard-btn" style="background: #1a1a1e; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.08); padding: 0.7rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; width: 100%; margin-top: 1rem;">Close</button>
                     </div>
 
                     <div class="modal-main-content">
@@ -285,7 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
         signupBtn = navMenuContainer.querySelector('.nav-cta-btn');
     }
     
-    // Binding hero triggers safely
     heroPrimaryCta = document.querySelector('.btn-primary');
 
     auth.onAuthStateChanged((user) => {
