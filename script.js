@@ -61,10 +61,11 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.id = 'auth-modal-card';
         modal.className = 'dropdown-inner-card';
         modal.style.cssText = `
-            display: block; width: 90%; max-width: 400px; border-radius: 24px;
-            border: 1px solid var(--glass-border); padding: 2.5rem 2rem;
+            display: block; width: 95%; max-width: 580px; border-radius: 24px;
+            border: 1px solid var(--glass-border); padding: 0;
             box-shadow: 0 20px 50px rgba(0,0,0,0.08); text-align: left;
             transform: scale(0.9); transition: transform 0.3s ease; position: relative;
+            overflow: hidden;
         `;
 
         overlay.appendChild(modal);
@@ -81,6 +82,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const overlay = document.getElementById('auth-modal-overlay');
         
         if (mode === 'signup') {
+            modal.style.maxWidth = '400px';
+            modal.style.padding = '2.5rem 2rem';
             modal.innerHTML = `
                 <h3 style="margin-top:0; font-size: 1.75rem; margin-bottom: 0.5rem;">Create Account</h3>
                 <p style="text-align:left; margin-bottom: 1.5rem;">Join HOUTS to build your project for real.</p>
@@ -100,6 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const switchLogin = document.getElementById('switch-to-login');
             if (switchLogin) switchLogin.addEventListener('click', (e) => { e.preventDefault(); showAuthModal('login'); });
         } else if (mode === 'login') {
+            modal.style.maxWidth = '400px';
+            modal.style.padding = '2.5rem 2rem';
             modal.innerHTML = `
                 <h3 style="margin-top:0; font-size: 1.75rem; margin-bottom: 0.5rem;">Welcome Back</h3>
                 <p style="text-align:left; margin-bottom: 1.5rem;">Log into your live profile dashboard.</p>
@@ -119,41 +124,122 @@ document.addEventListener('DOMContentLoaded', () => {
             const switchSignup = document.getElementById('switch-to-signup');
             if (switchSignup) switchSignup.addEventListener('click', (e) => { e.preventDefault(); showAuthModal('signup'); });
         } else if (mode === 'account' && user) {
-            // Get current username or fall back to email prefix
+            // Setup split layout panel dimensions
+            modal.style.maxWidth = '580px';
+            modal.style.padding = '0';
+
             const currentUsername = user.displayName || user.email.split('@')[0];
 
             modal.innerHTML = `
-                <h3 style="margin-top:0; font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-main);">Account Settings</h3>
-                <p style="text-align:left; margin-bottom: 1.5rem; color: var(--text-muted);">View and manage your HOUTS user details.</p>
-                
-                <div style="display: flex; flex-direction: column; gap: 1.2rem;">
-                    <div>
-                        <p style="margin: 0 0 0.2rem 0; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Current Username</p>
-                        <span id="display-username-text" style="font-size: 1.1rem; font-weight: 600; color: var(--primary);">${currentUsername}</span>
+                <div style="display: flex; flex-direction: row; min-height: 360px; width: 100%;">
+                    
+                    <div style="width: 35%; background: rgba(255,255,255,0.4); border-right: 1px solid var(--glass-border); padding: 2rem 0.75rem; display: flex; flex-direction: column; gap: 0.6rem;">
+                        <button id="modal-tab-profile" style="width: 100%; background: var(--primary); color: white; border: none; padding: 0.75rem 1rem; border-radius: 12px; font-weight: 600; cursor: pointer; text-align: left; font-size: 0.85rem; transition: all 0.2s;">
+                            👤 Profile Settings
+                        </button>
+                        <button id="modal-tab-subscription" style="width: 100%; background: transparent; color: var(--text-main); border: none; padding: 0.75rem 1rem; border-radius: 12px; font-weight: 600; cursor: pointer; text-align: left; font-size: 0.85rem; transition: all 0.2s;">
+                            💳 Subscription
+                        </button>
+                        <button id="modal-tab-websites" style="width: 100%; background: transparent; color: var(--text-main); border: none; padding: 0.75rem 1rem; border-radius: 12px; font-weight: 600; cursor: pointer; text-align: left; font-size: 0.85rem; transition: all 0.2s;">
+                            🌐 Your Websites
+                        </button>
+                        
+                        <button id="close-settings-modal" style="width:calc(100% - 1.5rem); background:var(--text-main); color:white; border:none; padding:0.65rem; border-radius:10px; font-size:0.8rem; font-weight:600; cursor:pointer; position: absolute; bottom: 1.5rem; left: 0.75rem;">Close Menu</button>
                     </div>
 
-                    <div>
-                        <p style="margin: 0 0 0.2rem 0; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Registered Email</p>
-                        <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-main);">${user.email}</span>
-                    </div>
-
-                    <hr style="border:none; border-top: 1px solid var(--glass-border); margin: 0.5rem 0;">
-
-                    <form id="username-update-form" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                        <label style="font-size:0.85rem; font-weight:600; color:var(--text-main);">Change Username</label>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <input type="text" id="new-username-input" placeholder="Enter new username" required style="flex-grow: 1; padding:0.6rem 1rem; border-radius:12px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.6); outline:none; font-size:0.95rem;">
-                            <button type="submit" id="username-save-btn" style="background:var(--primary); color:white; border:none; padding:0 1rem; border-radius:12px; font-size:0.9rem; font-weight:600; cursor:pointer;">Update</button>
+                    <div style="width: 65%; padding: 2.5rem 2rem; display: flex; flex-direction: column; justify-content: flex-start;">
+                        
+                        <div id="m-panel-profile" style="display: flex; flex-direction: column; gap: 1.2rem; width: 100%;">
+                            <h4 style="margin: 0; font-size: 1.3rem; color: var(--text-main);">Profile Settings</h4>
+                            <div>
+                                <p style="margin: 0 0 0.2rem 0; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Current Username</p>
+                                <span id="display-username-text" style="font-size: 1.1rem; font-weight: 600; color: var(--primary);">${currentUsername}</span>
+                            </div>
+                            <div>
+                                <p style="margin: 0 0 0.2rem 0; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Registered Email</p>
+                                <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-main);">${user.email}</span>
+                            </div>
+                            <form id="username-update-form" style="display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.2rem;">
+                                <label style="font-size:0.8rem; font-weight:600; color:var(--text-main);">Update Username</label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <input type="text" id="new-username-input" placeholder="New username" required style="width: 100%; padding:0.5rem 0.8rem; border-radius:10px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.6); outline:none; font-size:0.9rem;">
+                                    <button type="submit" id="username-save-btn" style="background:var(--primary); color:white; border:none; padding:0 0.8rem; border-radius:10px; font-size:0.85rem; font-weight:600; cursor:pointer; white-space: nowrap;">Save</button>
+                                </div>
+                            </form>
                         </div>
-                    </form>
+
+                        <div id="m-panel-subscription" style="display: none; flex-direction: column; gap: 1.2rem; width: 100%;">
+                            <h4 style="margin: 0; font-size: 1.3rem; color: var(--text-main);">Subscription Management</h4>
+                            <div style="background: rgba(99, 102, 241, 0.08); border: 1px dashed var(--primary); padding: 1rem; border-radius: 12px;">
+                                <p style="margin: 0 0 0.2rem 0; font-size: 0.7rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;">Active Tier Plan</p>
+                                <span style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">HOUTS Standard Free Tier</span>
+                            </div>
+                            <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">Your cloud sync permissions are unrestricted. Premium enterprise pipeline options will appear here once upgrades become available.</p>
+                        </div>
+
+                        <div id="m-panel-websites" style="display: none; flex-direction: column; gap: 1.2rem; width: 100%;">
+                            <h4 style="margin: 0; font-size: 1.3rem; color: var(--text-main);">Your Active Websites</h4>
+                            <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">The following deployed domains are authorized to talk to your credentials:</p>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <div style="background: rgba(255,255,255,0.5); border: 1px solid var(--glass-border); padding: 0.6rem 0.8rem; border-radius: 8px; font-family: monospace; font-size: 0.85rem; color: var(--text-main); display: flex; align-items: center; justify-content: space-between;">
+                                    <span>🌐 https://ricoana.github.io</span>
+                                    <span style="font-size: 0.7rem; background: #22c55e; color: white; padding: 0.15rem 0.4rem; border-radius: 4px; font-family: sans-serif; font-weight: bold;">LIVE</span>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.5); border: 1px solid var(--glass-border); padding: 0.6rem 0.8rem; border-radius: 8px; font-family: monospace; font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between;">
+                                    <span>💻 http://localhost</span>
+                                    <span style="font-size: 0.7rem; background: var(--text-muted); color: white; padding: 0.15rem 0.4rem; border-radius: 4px; font-family: sans-serif; font-weight: bold;">DEV</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
-                
-                <button id="close-settings-modal" style="width:100%; background:var(--text-main); color:white; border:none; padding:0.8rem; border-radius:12px; font-size:0.95rem; font-weight:600; cursor:pointer; margin-top: 1.5rem;">Close Settings</button>
             `;
+
+            // Core Tab Switching Mechanics Logic
+            const tabProfile = document.getElementById('modal-tab-profile');
+            const tabSubscription = document.getElementById('modal-tab-subscription');
+            const tabWebsites = document.getElementById('modal-tab-websites');
+
+            const pProfile = document.getElementById('m-panel-profile');
+            const pSubscription = document.getElementById('m-panel-subscription');
+            const pWebsites = document.getElementById('m-panel-websites');
+
+            const clearTabs = () => {
+                [tabProfile, tabSubscription, tabWebsites].forEach(btn => {
+                    btn.style.background = 'transparent';
+                    btn.style.color = 'var(--text-main)';
+                });
+                [pProfile, pSubscription, pWebsites].forEach(panel => {
+                    panel.style.display = 'none';
+                });
+            };
+
+            tabProfile.addEventListener('click', () => {
+                clearTabs();
+                tabProfile.style.background = 'var(--primary)';
+                tabProfile.style.color = 'white';
+                pProfile.style.display = 'flex';
+            });
+
+            tabSubscription.addEventListener('click', () => {
+                clearTabs();
+                tabSubscription.style.background = 'var(--primary)';
+                tabSubscription.style.color = 'white';
+                pSubscription.style.display = 'flex';
+            });
+
+            tabWebsites.addEventListener('click', () => {
+                clearTabs();
+                tabWebsites.style.background = 'var(--primary)';
+                tabWebsites.style.color = 'white';
+                pWebsites.style.display = 'flex';
+            });
 
             document.getElementById('close-settings-modal').addEventListener('click', hideAuthModal);
 
-            // Handle the submission of the username change
+            // Live Update Display Name Form Submission Task
             document.getElementById('username-update-form').addEventListener('submit', (e) => {
                 e.preventDefault();
                 const newUsername = document.getElementById('new-username-input').value.trim();
@@ -163,15 +249,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     user.updateProfile({
                         displayName: newUsername
                     }).then(() => {
-                        // Dynamically update the text in the modal right away
                         document.getElementById('display-username-text').textContent = newUsername;
                         document.getElementById('new-username-input').value = '';
                         
-                        // Visual success indicator on button
-                        saveBtn.textContent = 'Updated! ✓';
+                        saveBtn.textContent = 'Saved! ✓';
                         saveBtn.style.background = '#22c55e';
                         setTimeout(() => {
-                            saveBtn.textContent = 'Update';
+                            saveBtn.textContent = 'Save';
                             saveBtn.style.background = 'var(--primary)';
                         }, 2000);
                     }).catch((error) => {
@@ -237,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (signupBtn) signupBtn.style.display = 'none';
 
             if (navMenuContainer) {
-                // 1. Inject Account Settings link
+                // Inject Account Settings link
                 const settingsBtn = document.createElement('a');
                 settingsBtn.id = 'settings-menu-btn';
                 settingsBtn.href = '#';
@@ -249,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 navMenuContainer.appendChild(settingsBtn);
 
-                // 2. Inject Logout link
+                // Inject Logout link
                 const logoutBtn = document.createElement('a');
                 logoutBtn.id = 'logout-btn';
                 logoutBtn.href = '#';
