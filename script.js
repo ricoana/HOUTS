@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 2. POP-UP MODAL ENGINE (FULL-SCREEN MODE) ---
+    // --- 2. POP-UP MODAL ENGINE (FULL VIEWPORT WORKSPACE) ---
     const injectModalHTML = () => {
         if (document.getElementById('auth-modal-overlay')) return;
 
@@ -54,16 +54,15 @@ document.addEventListener('DOMContentLoaded', () => {
             background: rgba(10, 10, 12, 0.6); backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px); z-index: 9999;
             display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         `;
 
         const modal = document.createElement('div');
         modal.id = 'auth-modal-card';
         modal.style.cssText = `
             display: block; width: 100%; height: 100%;
-            background: #0c0c0e; padding: 0;
-            text-align: left; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
-            position: relative; overflow-y: auto; color: #ffffff; 
+            background: #0c0c0e; padding: 0; text-align: left;
+            position: relative; overflow: hidden; color: #ffffff; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         `;
 
@@ -77,13 +76,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const overlay = document.getElementById('auth-modal-overlay');
         
         if (mode === 'signup' || mode === 'login') {
-            // Keep auth screens as clean modal boxes centered on screen
+            // Keep credential blocks as centered modules
             modal.style.cssText = `
                 display: block; width: 95%; max-width: 400px; height: auto; border-radius: 16px;
                 background: #121214; border: 1px solid rgba(255, 255, 255, 0.08); padding: 2.5rem 2rem;
                 box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4); text-align: left;
-                transform: translateY(20px); transition: all 0.3s ease; position: relative;
-                color: #ffffff; font-family: sans-serif;
+                position: relative; color: #ffffff; font-family: sans-serif;
             `;
             
             if (mode === 'signup') {
@@ -124,89 +122,88 @@ document.addEventListener('DOMContentLoaded', () => {
             const switchSignup = document.getElementById('switch-to-signup');
             if (switchSignup) switchSignup.addEventListener('click', (e) => { e.preventDefault(); showAuthModal('signup'); });
 
-            setTimeout(() => { modal.style.transform = 'translateY(0)'; }, 10);
-
         } else if (mode === 'account' && user) {
-            // Take over the entire screen workspace seamlessly
+            // Apply a robust dual-column layout configuration that expands cleanly
             modal.style.cssText = `
-                display: flex; flex-direction: row; width: 100%; height: 100%;
-                background: #0c0c0e; padding: 0; color: #ffffff; position: relative;
+                display: grid; grid-template-columns: 260px minmax(0, 1fr);
+                width: 100vw; height: 100vh; background: #0c0c0e; padding: 0;
+                color: #ffffff; position: relative; box-sizing: border-box;
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             `;
 
             const currentUsername = user.displayName || user.email.split('@')[0];
 
             modal.innerHTML = `
-                <div style="width: 280px; min-width: 280px; background: #111113; border-right: 1px solid rgba(255, 255, 255, 0.04); padding: 3rem 1.5rem; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box;">
+                <div style="background: #111113; border-right: 1px solid rgba(255, 255, 255, 0.04); padding: 3rem 1.5rem; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; height: 100vh; overflow-y: auto;">
                     <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
                         <div style="margin-bottom: 2rem; padding-left: 0.5rem;">
-                            <h2 style="margin: 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.5px; color: #ffffff;">HOUTS SYSTEM</h2>
-                            <p style="margin: 0.2rem 0 0 0; font-size: 0.8rem; color: #71717a;">Control Center Workspace</p>
+                            <h2 style="margin: 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.5px; color: #ffffff; white-space: nowrap;">HOUTS SYSTEM</h2>
+                            <p style="margin: 0.2rem 0 0 0; font-size: 0.8rem; color: #71717a; white-space: nowrap;">Control Center Workspace</p>
                         </div>
 
-                        <button id="modal-tab-profile" style="width: 100%; background: rgba(255, 255, 255, 0.06); color: #ffffff; border: none; padding: 0.85rem 1.2rem; border-radius: 8px; font-weight: 500; cursor: pointer; text-align: left; font-size: 0.95rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.75rem; box-sizing: border-box;">
+                        <button id="modal-tab-profile" style="width: 100%; background: rgba(255, 255, 255, 0.06); color: #ffffff; border: none; padding: 0.85rem 1.2rem; border-radius: 8px; font-weight: 500; cursor: pointer; text-align: left; font-size: 0.95rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.75rem; box-sizing: border-box; white-space: nowrap;">
                             <span style="font-size: 1.1rem; line-height: 1;">👤</span> Profile Settings
                         </button>
-                        <button id="modal-tab-settings" style="width: 100%; background: transparent; color: #a1a1aa; border: none; padding: 0.85rem 1.2rem; border-radius: 8px; font-weight: 500; cursor: pointer; text-align: left; font-size: 0.95rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.75rem; box-sizing: border-box;">
+                        <button id="modal-tab-settings" style="width: 100%; background: transparent; color: #a1a1aa; border: none; padding: 0.85rem 1.2rem; border-radius: 8px; font-weight: 500; cursor: pointer; text-align: left; font-size: 0.95rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.75rem; box-sizing: border-box; white-space: nowrap;">
                             <span style="font-size: 1.1rem; line-height: 1;">⚙️</span> System Settings
                         </button>
                     </div>
                     
-                    <button id="close-settings-modal" style="width: 100%; background: #1a1a1e; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.08); padding: 0.75rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; box-sizing: border-box; text-align: center;">Exit Dashboard</button>
+                    <button id="close-settings-modal" style="width: 100%; background: #1a1a1e; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.08); padding: 0.75rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; box-sizing: border-box; text-align: center; white-space: nowrap;">Exit Dashboard</button>
                 </div>
 
-                <div style="flex-grow: 1; height: 100%; overflow-y: auto; padding: 5rem 6rem; display: flex; flex-direction: column; justify-content: flex-start; background: #0c0c0e; box-sizing: border-box;">
-                    <div style="width: 100%; max-width: 640px; display: flex; flex-direction: column;">
+                <div style="height: 100vh; overflow-y: auto; padding: 4.5rem 5% 4.5rem 5%; background: #0c0c0e; box-sizing: border-box; display: flex; flex-direction: column; align-items: flex-start;">
+                    <div style="width: 100%; max-width: 680px; display: flex; flex-direction: column; box-sizing: border-box;">
                         
-                        <div id="m-panel-profile" style="display: flex; flex-direction: column; gap: 2.5rem; width: 100%;">
+                        <div id="m-panel-profile" style="display: flex; flex-direction: column; gap: 2.5rem; width: 100%; box-sizing: border-box;">
                             <div>
-                                <h1 style="margin: 0 0 0.5rem 0; font-size: 2.2rem; font-weight: 700; color: #ffffff; letter-spacing: -0.5px;">Profile Configuration</h1>
+                                <h1 style="margin: 0 0 0.5rem 0; font-size: 2.2rem; font-weight: 700; color: #ffffff; letter-spacing: -0.5px; line-height: 1.2;">Profile Configuration</h1>
                                 <p style="margin: 0; font-size: 0.95rem; color: #a1a1aa; line-height: 1.5;">Review personal credential metadata allocations mapping to active live endpoints.</p>
                             </div>
                             
                             <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.06); margin: 0; width: 100%;">
 
-                            <div style="display: flex; flex-direction: column; gap: 2rem; width: 100%;">
+                            <div style="display: flex; flex-direction: column; gap: 2rem; width: 100%; box-sizing: border-box;">
                                 <div>
                                     <p style="margin: 0 0 0.5rem 0; font-size: 0.8rem; font-weight: 600; color: #71717a; text-transform: uppercase; letter-spacing: 1px;">Current Developer Handle</p>
-                                    <span id="display-username-text" style="font-size: 1.35rem; font-weight: 600; color: #ffffff;">${currentUsername}</span>
+                                    <span id="display-username-text" style="font-size: 1.35rem; font-weight: 600; color: #ffffff; word-break: break-all;">${currentUsername}</span>
                                 </div>
                                 <div>
                                     <p style="margin: 0 0 0.5rem 0; font-size: 0.8rem; font-weight: 600; color: #71717a; text-transform: uppercase; letter-spacing: 1px;">Primary Node Email</p>
-                                    <span style="font-size: 1.15rem; font-weight: 400; color: #e4e4e7;">${user.email}</span>
+                                    <span style="font-size: 1.15rem; font-weight: 400; color: #e4e4e7; word-break: break-all;">${user.email}</span>
                                 </div>
                                 
-                                <form id="username-update-form" style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1rem; width: 100%;">
+                                <form id="username-update-form" style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1rem; width: 100%; box-sizing: border-box;">
                                     <label style="font-size:0.9rem; font-weight:500; color:#e4e4e7;">Modify User Account ID</label>
-                                    <div style="display: flex; gap: 0.75rem; width: 100%;">
-                                        <input type="text" id="new-username-input" placeholder="Enter new handle" required style="flex-grow: 1; padding:0.75rem 1.2rem; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:#141416; color:#ffffff; outline:none; font-size:1rem; min-width: 0;">
-                                        <button type="submit" id="username-save-btn" style="background:#ffffff; color:#000000; border:none; padding:0 1.8rem; border-radius:8px; font-size:0.95rem; font-weight:600; cursor:pointer; white-space: nowrap; transition: background 0.2s;">Save Changes</button>
+                                    <div style="display: flex; gap: 0.75rem; width: 100%; flex-wrap: wrap;">
+                                        <input type="text" id="new-username-input" placeholder="Enter new handle" required style="flex: 1; min-width: 200px; padding:0.75rem 1.2rem; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:#141416; color:#ffffff; outline:none; font-size:1rem; box-sizing: border-box;">
+                                        <button type="submit" id="username-save-btn" style="background:#ffffff; color:#000000; border:none; padding:0 1.8rem; height: 46px; border-radius:8px; font-size:0.95rem; font-weight:600; cursor:pointer; white-space: nowrap; transition: background 0.2s; box-sizing: border-box;">Save Changes</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
 
-                        <div id="m-panel-settings" style="display: none; flex-direction: column; gap: 2.5rem; width: 100%;">
+                        <div id="m-panel-settings" style="display: none; flex-direction: column; gap: 2.5rem; width: 100%; box-sizing: border-box;">
                             <div>
-                                <h1 style="margin: 0 0 0.5rem 0; font-size: 2.2rem; font-weight: 700; color: #ffffff; letter-spacing: -0.5px;">System Settings</h1>
+                                <h1 style="margin: 0 0 0.5rem 0; font-size: 2.2rem; font-weight: 700; color: #ffffff; letter-spacing: -0.5px; line-height: 1.2;">System Settings</h1>
                                 <p style="margin: 0; font-size: 0.95rem; color: #a1a1aa; line-height: 1.5;">Configure authorization ecosystem preferences and telemetry validation status.</p>
                             </div>
                             
                             <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.06); margin: 0; width: 100%;">
 
-                            <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
-                                <div style="background: #111113; border: 1px solid rgba(255, 255, 255, 0.04); padding: 1.25rem 1.75rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem;">
-                                    <div>
+                            <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%; box-sizing: border-box;">
+                                <div style="background: #111113; border: 1px solid rgba(255, 255, 255, 0.04); padding: 1.25rem 1.75rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; flex-wrap: wrap; box-sizing: border-box;">
+                                    <div style="flex: 1; min-width: 200px;">
                                         <p style="margin: 0 0 0.2rem 0; font-weight: 500; font-size: 1.05rem; color: #ffffff;">Cloud Ecosystem State</p>
-                                        <p style="margin: 0; font-size: 0.85rem; color: #71717a;">Standard unrestricted node connection running efficiently.</p>
+                                        <p style="margin: 0; font-size: 0.85rem; color: #71717a; line-height: 1.4;">Standard unrestricted node connection running efficiently.</p>
                                     </div>
                                     <span style="font-size: 0.75rem; background: rgba(34, 197, 94, 0.1); color: #22c55e; padding: 0.35rem 0.8rem; border-radius: 6px; font-weight: 600; border: 1px solid rgba(34, 197, 94, 0.2); white-space: nowrap;">ONLINE</span>
                                 </div>
 
-                                <div style="background: #111113; border: 1px solid rgba(255, 255, 255, 0.04); padding: 1.25rem 1.75rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem;">
-                                    <div>
+                                <div style="background: #111113; border: 1px solid rgba(255, 255, 255, 0.04); padding: 1.25rem 1.75rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; flex-wrap: wrap; box-sizing: border-box;">
+                                    <div style="flex: 1; min-width: 200px;">
                                         <p style="margin: 0 0 0.2rem 0; font-weight: 500; font-size: 1.05rem; color: #ffffff;">Security Tokens</p>
-                                        <p style="margin: 0; font-size: 0.85rem; color: #71717a;">SSL cryptographic secure handshake keys validated.</p>
+                                        <p style="margin: 0; font-size: 0.85rem; color: #71717a; line-height: 1.4;">SSL cryptographic secure handshake keys validated.</p>
                                     </div>
                                     <span style="font-size: 0.75rem; background: rgba(99, 102, 241, 0.1); color: #818cf8; padding: 0.35rem 0.8rem; border-radius: 6px; font-weight: 600; border: 1px solid rgba(99, 102, 241, 0.2); white-space: nowrap;">ACTIVE</span>
                                 </div>
