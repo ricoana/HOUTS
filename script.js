@@ -8,14 +8,13 @@ const firebaseConfig = {
   appId: "1:656004224039:web:6a3e74279d89372790ea02"
 };
 
-// Initialize Firebase App, Auth, and Firestore Database
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-const db = firebase.firestore(); // <-- Firestore database link integrated!
+const db = firebase.firestore();
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Top right Hamburger active dropdown controller
+    // Mobile navigation active class controls
     const menuToggle = document.querySelector('.mobile-menu-toggle');
     const navMenu = document.querySelector('.nav-menu');
 
@@ -24,322 +23,200 @@ document.addEventListener('DOMContentLoaded', () => {
             menuToggle.classList.toggle('active');
             navMenu.classList.toggle('active');
         });
-
-        navMenu.addEventListener('click', (e) => {
-            if (e.target.tagName === 'A') {
-                menuToggle.classList.remove('active');
-                navMenu.classList.remove('active');
-            }
-        });
     }
 
-    // Centered learn more dropdown accordion handler
-    const dropdownWrapper = document.querySelector('.info-dropdown');
-    const dropdownTrigger = document.querySelector('.dropdown-trigger');
-
-    if (dropdownTrigger && dropdownWrapper) {
-        dropdownTrigger.addEventListener('click', () => {
-            const isOpen = dropdownWrapper.classList.toggle('is-open');
-            dropdownTrigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        });
-    }
-
-    // --- 2. POP-UP MODAL ENGINE ---
+    // --- 2. MODAL SYSTEM INJECTION ENGINE ---
     const injectModalHTML = () => {
         if (document.getElementById('auth-modal-overlay')) return;
 
         const styleTag = document.createElement('style');
-        styleTag.id = 'modal-responsive-styles';
+        styleTag.id = 'modal-core-styles';
         styleTag.innerHTML = `
-            .houts-modal-grid {
-                display: grid;
-                grid-template-columns: 240px minmax(0, 1fr);
-                width: 100vw;
-                height: 100vh;
-                background: #0c0c0e;
-            }
-            .houts-sidebar {
-                background: #111113;
-                border-right: 1px solid rgba(255, 255, 255, 0.04);
-                padding: 2.5rem 1.5rem;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                box-sizing: border-box;
-                height: 100%;
-            }
-            .houts-tab-container {
-                display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
-                width: 100%;
-            }
-            .houts-main-content {
-                height: 100%;
-                overflow-y: auto;
-                padding: 4rem 3rem;
-                background: #0c0c0e;
+            #auth-modal-overlay {
+                position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+                background: rgba(10, 10, 12, 0.75); backdrop-filter: blur(15px);
+                -webkit-backdrop-filter: blur(15px); z-index: 99999;
+                display: flex; justify-content: center; align-items: center;
+                opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
                 box-sizing: border-box;
             }
-            @media (max-width: 768px) {
-                .houts-modal-grid {
-                    grid-template-columns: 1fr !important;
-                    grid-template-rows: auto 1fr !important;
-                    height: 100vh;
-                }
-                .houts-sidebar {
-                    border-right: none !important;
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-                    padding: 1.25rem 1rem !important;
-                    height: auto !important;
-                    flex-direction: row !important;
-                    align-items: center !important;
-                    gap: 1rem;
-                }
-                .houts-sidebar .brand-header {
-                    display: none !important;
-                }
-                .houts-tab-container {
-                    flex-direction: row !important;
-                    width: auto !important;
-                    flex-grow: 1;
-                }
-                .houts-main-content {
-                    padding: 2rem 1.25rem !important;
-                }
-                #close-settings-modal {
-                    width: auto !important;
-                    padding: 0.6rem 1rem !important;
-                    margin-top: 0 !important;
-                }
+            .modal-box-card {
+                background: #121214; border: 1px solid rgba(255, 255, 255, 0.08);
+                width: 90%; max-width: 400px; border-radius: 16px; padding: 2.25rem 1.75rem;
+                box-shadow: 0 20px 50px rgba(0,0,0,0.5); color: #ffffff;
+                box-sizing: border-box; position: relative;
+            }
+            .modal-dashboard-layout {
+                background: #0c0c0e; border: 1px solid rgba(255, 255, 255, 0.05);
+                width: 92%; max-width: 760px; height: 85vh; max-height: 600px;
+                border-radius: 20px; display: grid; grid-template-columns: 240px 1fr;
+                box-shadow: 0 30px 70px rgba(0,0,0,0.6); color: #ffffff;
+                overflow: hidden; box-sizing: border-box; position: relative;
+            }
+            .modal-sidebar {
+                background: #111113; border-right: 1px solid rgba(255, 255, 255, 0.05);
+                padding: 2rem 1.25rem; display: flex; flex-direction: column;
+                justify-content: space-between; box-sizing: border-box;
+            }
+            .modal-main-view {
+                padding: 2.5rem; overflow-y: auto; background: #0c0c0e; box-sizing: border-box;
+            }
+            .tab-btn {
+                width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: none;
+                background: transparent; color: #a1a1aa; font-weight: 600; font-size: 0.9rem;
+                cursor: pointer; text-align: left; display: flex; align-items: center; gap: 0.5rem;
+                transition: all 0.2s ease; box-sizing: border-box;
+            }
+            .tab-btn.active { background: rgba(255, 255, 255, 0.06); color: #ffffff; }
+            .modal-input {
+                width: 100%; padding: 0.75rem 1rem; border-radius: 8px;
+                border: 1px solid rgba(255,255,255,0.1); background: #1a1a1e;
+                color: #ffffff; outline: none; margin-bottom: 1.25rem; font-size: 0.95rem;
+                box-sizing: border-box;
+            }
+            .modal-submit-btn {
+                width: 100%; background: #ffffff; color: #000000; font-weight: 700;
+                border: none; padding: 0.85rem; border-radius: 8px; cursor: pointer;
+                font-size: 0.95rem; transition: opacity 0.2s ease;
+            }
+            .modal-submit-btn:hover { opacity: 0.9; }
+            @media (max-width: 680px) {
+                .modal-dashboard-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; height: 90vh; }
+                .modal-sidebar { flex-direction: row; padding: 1rem; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+                .modal-main-view { padding: 1.5rem; }
+                .tab-btn { width: auto; padding: 0.5rem 0.75rem; }
+                .brand-meta { display: none !important; }
             }
         `;
         document.head.appendChild(styleTag);
 
         const overlay = document.createElement('div');
         overlay.id = 'auth-modal-overlay';
-        overlay.style.cssText = `
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(10, 10, 12, 0.6); backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px); z-index: 9999;
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-        `;
-
-        const modal = document.createElement('div');
-        modal.id = 'auth-modal-card';
-        modal.style.cssText = `
-            display: block; width: 100%; height: 100%;
-            background: #0c0c0e; padding: 0; text-align: left;
-            position: relative; overflow: hidden; color: #ffffff; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        `;
-
-        overlay.appendChild(modal);
         document.body.appendChild(overlay);
     };
 
     const showAuthModal = (mode, user = null) => {
         injectModalHTML();
-        const modal = document.getElementById('auth-modal-card');
         const overlay = document.getElementById('auth-modal-overlay');
         
         if (mode === 'signup' || mode === 'login') {
-            modal.removeAttribute('class');
-            modal.style.cssText = `
-                display: block; width: 90%; max-width: 400px; height: auto; border-radius: 16px;
-                background: #121214; border: 1px solid rgba(255, 255, 255, 0.08); padding: 2.5rem 2rem;
-                box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4); text-align: left;
-                position: relative; color: #ffffff; font-family: sans-serif;
+            overlay.innerHTML = `
+                <div class="modal-box-card">
+                    <button id="close-modal-x" style="position:absolute; top:1rem; right:1rem; background:none; border:none; color:#71717a; font-size:1.2rem; cursor:pointer; font-weight:700;">&times;</button>
+                    <h3 style="font-size: 1.6rem; margin-bottom: 0.4rem; font-weight:700;">${mode === 'signup' ? 'Create Account' : 'Welcome Back'}</h3>
+                    <p style="color:#a1a1aa; font-size:0.9rem; margin-bottom:1.5rem;">${mode === 'signup' ? 'Join HOUTS to deploy projects.' : 'Access your profile instance portal.'}</p>
+                    <form id="modal-form-action">
+                        <label style="display:block; font-size:0.8rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Email Address</label>
+                        <input type="email" id="modal-email" required class="modal-input">
+                        <label style="display:block; font-size:0.8rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Password</label>
+                        <input type="password" id="modal-password" required class="modal-input">
+                        <button type="submit" class="modal-submit-btn">${mode === 'signup' ? 'Sign Up' : 'Log In'}</button>
+                    </form>
+                    <p style="margin-top:1.25rem; font-size:0.85rem; color:#71717a; text-align:center;">
+                        ${mode === 'signup' ? 'Already registered? <a href="#" id="modal-toggle-view" style="color:#ffffff; font-weight:600; text-decoration:none;">Log In</a>' : 'New to HOUTS? <a href="#" id="modal-toggle-view" style="color:#ffffff; font-weight:600; text-decoration:none;">Create Account</a>'}
+                    </p>
+                </div>
             `;
-            
-            if (mode === 'signup') {
-                modal.innerHTML = `
-                    <h3 style="margin-top:0; font-size: 1.75rem; margin-bottom: 0.5rem; color: #ffffff;">Create Account</h3>
-                    <p style="text-align:left; margin-bottom: 1.5rem; color: #a1a1aa;">Join HOUTS to build your project for real.</p>
-                    <form id="auth-form">
-                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Email Address</label>
-                        <input type="email" id="auth-email" required style="width:100%; padding:0.8rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1e; color:#ffffff; margin-bottom:1rem; outline:none; font-size:1rem; box-sizing:border-box;">
-                        
-                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Password</label>
-                        <input type="password" id="auth-password" required style="width:100%; padding:0.8rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1e; color:#ffffff; margin-bottom:1.5rem; outline:none; font-size:1rem; box-sizing:border-box;">
-                        
-                        <button type="submit" style="width:100%; background:#ffffff; color:#000000; border:none; padding:0.9rem; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer;">Sign Up</button>
-                    </form>
-                    <p style="margin-top:1.2rem; font-size:0.85rem; margin-bottom:0; color:#71717a;">Already registered? <a href="#" id="switch-to-login" style="color:#ffffff; font-weight:600; text-decoration:none;">Log In</a></p>
-                `;
-            } else {
-                modal.innerHTML = `
-                    <h3 style="margin-top:0; font-size: 1.75rem; margin-bottom: 0.5rem; color:#ffffff;">Welcome Back</h3>
-                    <p style="text-align:left; margin-bottom: 1.5rem; color:#a1a1aa;">Log into your live profile dashboard.</p>
-                    <form id="auth-form">
-                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Email Address</label>
-                        <input type="email" id="auth-email" required style="width:100%; padding:0.8rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1e; color:#ffffff; margin-bottom:1rem; outline:none; font-size:1rem; box-sizing:border-box;">
-                        
-                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#e4e4e7;">Password</label>
-                        <input type="password" id="auth-password" required style="width:100%; padding:0.8rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1e; color:#ffffff; margin-bottom:1.5rem; outline:none; font-size:1rem; box-sizing:border-box;">
-                        
-                        <button type="submit" style="width:100%; background:#ffffff; color:#000000; border:none; padding:0.9rem; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer;">Log In</button>
-                    </form>
-                    <p style="margin-top:1.2rem; font-size:0.85rem; margin-bottom:0; color:#71717a;">New to HOUTS? <a href="#" id="switch-to-signup" style="color:#ffffff; font-weight:600; text-decoration:none;">Create Account</a></p>
-                `;
-            }
-            document.getElementById('auth-form').addEventListener('submit', (e) => handleAuthSubmit(e, mode));
-            
-            const switchLogin = document.getElementById('switch-to-login');
-            if (switchLogin) switchLogin.addEventListener('click', (e) => { e.preventDefault(); showAuthModal('login'); });
-            const switchSignup = document.getElementById('switch-to-signup');
-            if (switchSignup) switchSignup.addEventListener('click', (e) => { e.preventDefault(); showAuthModal('signup'); });
+
+            document.getElementById('modal-form-action').addEventListener('submit', (e) => handleAuthSubmit(e, mode));
+            document.getElementById('close-modal-x').addEventListener('click', hideAuthModal);
+            document.getElementById('modal-toggle-view').addEventListener('click', (e) => {
+                e.preventDefault();
+                showAuthModal(mode === 'signup' ? 'login' : 'signup');
+            });
 
         } else if (mode === 'account' && user) {
-            modal.style.cssText = '';
-            modal.className = 'houts-modal-grid';
-
-            modal.innerHTML = `
-                <div class="houts-sidebar">
-                    <div class="houts-tab-container">
-                        <div class="brand-header" style="margin-bottom: 1.5rem; padding-left: 0.5rem;">
-                            <h2 style="margin: 0; font-size: 1.1rem; font-weight: 700; letter-spacing: -0.5px; color: #ffffff;">HOUTS SYSTEM</h2>
-                            <p style="margin: 0.1rem 0 0 0; font-size: 0.75rem; color: #71717a;">Dashboard v1.2</p>
+            overlay.innerHTML = `
+                <div class="modal-dashboard-layout">
+                    <div class="modal-sidebar">
+                        <div style="display:flex; flex-direction:column; gap:0.5rem; width:100%;">
+                            <div class="brand-meta" style="margin-bottom:1.25rem; padding-left:0.5rem;">
+                                <h2 style="font-size:1rem; font-weight:700; margin:0; letter-spacing:-0.3px;">HOUTS INSTANCE</h2>
+                                <p style="font-size:0.75rem; color:#71717a; margin:0;">Cloud Account Engine</p>
+                            </div>
+                            <button id="tab-profile-trigger" class="tab-btn active">👤 Profile</button>
+                            <button id="tab-settings-trigger" class="tab-btn">⚙️ System</button>
                         </div>
-                        <button id="modal-tab-profile" style="background: rgba(255, 255, 255, 0.06); color: #ffffff; border: none; padding: 0.75rem 1rem; border-radius: 8px; font-weight: 500; cursor: pointer; text-align: left; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; box-sizing: border-box; white-space: nowrap; flex-grow: 1;">
-                            👤 <span class="tab-label">Profile</span>
-                        </button>
-                        <button id="modal-tab-settings" style="background: transparent; color: #a1a1aa; border: none; padding: 0.75rem 1rem; border-radius: 8px; font-weight: 500; cursor: pointer; text-align: left; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; box-sizing: border-box; white-space: nowrap; flex-grow: 1;">
-                            ⚙️ <span class="tab-label">Settings</span>
-                        </button>
+                        <button id="modal-dashboard-close" style="background:#1a1a1e; color:#ffffff; border:1px solid rgba(255,255,255,0.08); padding:0.6rem; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; margin-top:1rem; width:100%;">Close Dashboard</button>
                     </div>
-                    <button id="close-settings-modal" style="background: #1a1a1e; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.08); padding: 0.7rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-align: center; white-space: nowrap; box-sizing: border-box;">Close</button>
-                </div>
-
-                <div class="houts-main-content">
-                    <div style="width: 100%; max-width: 580px; display: flex; flex-direction: column; box-sizing: border-box;">
-                        
-                        <div id="m-panel-profile" style="display: flex; flex-direction: column; gap: 2rem; width: 100%; box-sizing: border-box;">
+                    <div class="modal-main-view">
+                        <div id="panel-profile-view" style="display:flex; flex-direction:column; gap:1.5rem;">
                             <div>
-                                <h1 style="margin: 0 0 0.4rem 0; font-size: 1.8rem; font-weight: 700; color: #ffffff; letter-spacing: -0.5px;">Profile Settings</h1>
-                                <p style="margin: 0; font-size: 0.9rem; color: #a1a1aa; line-height: 1.4;">Manage your account username identifiers and emails.</p>
+                                <h1 style="font-size:1.6rem; font-weight:700; margin:0 0 0.25rem 0;">Account Profile</h1>
+                                <p style="color:#a1a1aa; font-size:0.9rem; margin:0;">Manage and rewrite database username sync fields.</p>
                             </div>
-                            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.06); margin: 0; width: 100%;">
-                            <div style="display: flex; flex-direction: column; gap: 1.5rem; width: 100%; box-sizing: border-box;">
-                                <div>
-                                    <p style="margin: 0 0 0.3rem 0; font-size: 0.75rem; font-weight: 600; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px;">Current Username</p>
-                                    <span id="display-username-text" style="font-size: 1.2rem; font-weight: 600; color: #ffffff; word-break: break-all;">Loading...</span>
+                            <hr style="border:0; border-top:1px solid rgba(255,255,255,0.06); margin:0;">
+                            <div>
+                                <p style="font-size:0.7rem; font-weight:600; color:#71717a; text-transform:uppercase; margin-bottom:0.25rem;">Active Username Handle</p>
+                                <span id="dash-username-display" style="font-size:1.15rem; font-weight:600; color:#ffffff;">Loading index...</span>
+                            </div>
+                            <div>
+                                <p style="font-size:0.7rem; font-weight:600; color:#71717a; text-transform:uppercase; margin-bottom:0.25rem;">User Account Core Email</p>
+                                <span style="font-size:1rem; color:#e4e4e7;">${user.email}</span>
+                            </div>
+                            <form id="dash-username-form" style="display:flex; flex-direction:column; gap:0.5rem; margin-top:0.5rem;">
+                                <label style="font-size:0.85rem; color:#e4e4e7;">Update Workspace Handle</label>
+                                <div style="display:flex; gap:0.5rem;">
+                                    <input type="text" id="dash-username-input" placeholder="Enter clean alphanumeric name" required style="flex:1; padding:0.6rem 1rem; background:#141416; border:1px solid rgba(255,255,255,0.08); border-radius:8px; color:#ffffff; outline:none;">
+                                    <button type="submit" id="dash-save-btn" style="background:#ffffff; color:#000000; border:none; padding:0 1.25rem; border-radius:8px; font-weight:600; cursor:pointer;">Save</button>
                                 </div>
-                                <div>
-                                    <p style="margin: 0 0 0.3rem 0; font-size: 0.75rem; font-weight: 600; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px;">Registered Email Address</p>
-                                    <span style="font-size: 1.05rem; font-weight: 400; color: #e4e4e7; word-break: break-all;">${user.email}</span>
-                                </div>
-                                
-                                <form id="username-update-form" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem; width: 100%; box-sizing: border-box;">
-                                    <label style="font-size:0.85rem; font-weight:500; color:#e4e4e7;">Change Account Username</label>
-                                    <div style="display: flex; gap: 0.5rem; width: 100%; flex-wrap: wrap;">
-                                        <input type="text" id="new-username-input" placeholder="New username" required style="flex: 1; min-width: 160px; padding:0.65rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:#141416; color:#ffffff; outline:none; font-size:0.95rem; box-sizing: border-box;">
-                                        <button type="submit" id="username-save-btn" style="background:#ffffff; color:#000000; border:none; padding: 0 1.5rem; height: 40px; border-radius:8px; font-size:0.9rem; font-weight:600; cursor:pointer; white-space: nowrap; transition: background 0.2s; box-sizing: border-box; flex-grow: 1;">Save</button>
-                                    </div>
-                                </form>
+                            </form>
+                        </div>
+                        <div id="panel-settings-view" style="display:none; flex-direction:column; gap:1.5rem;">
+                            <div>
+                                <h1 style="font-size:1.6rem; font-weight:700; margin:0 0 0.25rem 0;">System Context</h1>
+                                <p style="color:#a1a1aa; font-size:0.9rem; margin:0;">Cloud ecosystem node validations.</p>
+                            </div>
+                            <hr style="border:0; border-top:1px solid rgba(255,255,255,0.06); margin:0;">
+                            <div style="background:#111113; padding:1rem; border-radius:10px; display:flex; justify-content:between; align-items:center; border:1px solid rgba(255,255,255,0.04);">
+                                <div style="flex:1;"><p style="margin:0; font-size:0.9rem; font-weight:600;">Ecosystem Routing Core</p></div>
+                                <span style="font-size:0.7rem; background:rgba(34,197,94,0.1); color:#22c55e; padding:0.25rem 0.5rem; border-radius:5px; font-weight:700;">SECURE NODE</span>
                             </div>
                         </div>
-
-                        <div id="m-panel-settings" style="display: none; flex-direction: column; gap: 2rem; width: 100%; box-sizing: border-box;">
-                            <div>
-                                <h1 style="margin: 0 0 0.4rem 0; font-size: 1.8rem; font-weight: 700; color: #ffffff; letter-spacing: -0.5px;">System Security</h1>
-                                <p style="margin: 0; font-size: 0.9rem; color: #a1a1aa; line-height: 1.4;">View current background security token states.</p>
-                            </div>
-                            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.06); margin: 0; width: 100%;">
-                            <div style="display: flex; flex-direction: column; gap: 0.75rem; width: 100%; box-sizing: border-box;">
-                                <div style="background: #111113; border: 1px solid rgba(255, 255, 255, 0.04); padding: 1rem 1.25rem; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; box-sizing: border-box;">
-                                    <div style="flex: 1; min-width: 150px;">
-                                        <p style="margin: 0 0 0.15rem 0; font-weight: 500; font-size: 0.95rem; color: #ffffff;">Cloud Core Sync</p>
-                                        <p style="margin: 0; font-size: 0.8rem; color: #71717a;">Ecosystem nodes verified.</p>
-                                    </div>
-                                    <span style="font-size: 0.7rem; background: rgba(34, 197, 94, 0.1); color: #22c55e; padding: 0.25rem 0.6rem; border-radius: 5px; font-weight: 600; border: 1px solid rgba(34, 197, 94, 0.2); white-space: nowrap;">ONLINE</span>
-                                </div>
-                                <div style="background: #111113; border: 1px solid rgba(255, 255, 255, 0.04); padding: 1rem 1.25rem; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; box-sizing: border-box;">
-                                    <div style="flex: 1; min-width: 150px;">
-                                        <p style="margin: 0 0 0.15rem 0; font-weight: 500; font-size: 0.95rem; color: #ffffff;">SSL Certificates</p>
-                                        <p style="margin: 0; font-size: 0.8rem; color: #71717a;">Cryptographic validation verified.</p>
-                                    </div>
-                                    <span style="font-size: 0.7rem; background: rgba(99, 102, 241, 0.1); color: #818cf8; padding: 0.25rem 0.6rem; border-radius: 5px; font-weight: 600; border: 1px solid rgba(99, 102, 241, 0.2); white-space: nowrap;">ACTIVE</span>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             `;
 
-            // READ LIVE PROFILE DATA FROM FIRESTORE
-            const usernameTextNode = document.getElementById('display-username-text');
+            // Read live handle
+            const userDisplayNode = document.getElementById('dash-username-display');
             db.collection('users').doc(user.uid).get().then((doc) => {
-                if (doc.exists && doc.data().username) {
-                    usernameTextNode.textContent = doc.data().username;
-                } else {
-                    usernameTextNode.textContent = user.email.split('@')[0]; // Default fallback if data empty
-                }
-            }).catch(err => {
-                usernameTextNode.textContent = "Error loading";
-                console.error(err);
+                userDisplayNode.textContent = (doc.exists && doc.data().username) ? doc.data().username : user.email.split('@')[0];
+            }).catch(() => { userDisplayNode.textContent = "Error sync node"; });
+
+            // Tab logic controls
+            const tProf = document.getElementById('tab-profile-trigger');
+            const tSet = document.getElementById('tab-settings-trigger');
+            const vProf = document.getElementById('panel-profile-view');
+            const vSet = document.getElementById('panel-settings-view');
+
+            tProf.addEventListener('click', () => {
+                tProf.classList.add('active'); tSet.classList.remove('active');
+                vProf.style.display = 'flex'; vSet.style.display = 'none';
+            });
+            tSet.addEventListener('click', () => {
+                tSet.classList.add('active'); tProf.classList.remove('active');
+                vProf.style.display = 'none'; vSet.style.display = 'flex';
             });
 
-            const tabProfile = document.getElementById('modal-tab-profile');
-            const tabSettings = document.getElementById('modal-tab-settings');
-            const pProfile = document.getElementById('m-panel-profile');
-            const pSettings = document.getElementById('m-panel-settings');
+            document.getElementById('modal-dashboard-close').addEventListener('click', hideAuthModal);
 
-            const clearTabs = () => {
-                [tabProfile, tabSettings].forEach(btn => {
-                    btn.style.background = 'transparent';
-                    btn.style.color = '#a1a1aa';
-                });
-                [pProfile, pSettings].forEach(panel => {
-                    panel.style.display = 'none';
-                });
-            };
-
-            tabProfile.addEventListener('click', () => {
-                clearTabs();
-                tabProfile.style.background = 'rgba(255, 255, 255, 0.06)';
-                tabProfile.style.color = '#ffffff';
-                pProfile.style.display = 'flex';
-            });
-
-            tabSettings.addEventListener('click', () => {
-                clearTabs();
-                tabSettings.style.background = 'rgba(255, 255, 255, 0.06)';
-                tabSettings.style.color = '#ffffff';
-                pSettings.style.display = 'flex';
-            });
-
-            document.getElementById('close-settings-modal').addEventListener('click', hideAuthModal);
-
-            // WRITE LIVE PROFILE DATA TO FIRESTORE PERMANENTLY
-            document.getElementById('username-update-form').addEventListener('submit', (e) => {
+            // Write permanent custom handles
+            document.getElementById('dash-username-form').addEventListener('submit', (e) => {
                 e.preventDefault();
-                const newUsername = document.getElementById('new-username-input').value.trim();
-                const saveBtn = document.getElementById('username-save-btn');
+                const newHandle = document.getElementById('dash-username-input').value.trim();
+                const saveBtn = document.getElementById('dash-save-btn');
 
-                if (newUsername) {
-                    // Saves username using the user's specific secure Firebase UID
+                if (newHandle) {
                     db.collection('users').doc(user.uid).set({
-                        username: newUsername,
+                        username: newHandle,
                         email: user.email,
                         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     }, { merge: true })
                     .then(() => {
-                        document.getElementById('display-username-text').textContent = newUsername;
-                        document.getElementById('new-username-input').value = '';
-                        
-                        saveBtn.textContent = 'Saved! ✓';
-                        saveBtn.style.background = '#22c55e';
-                        saveBtn.style.color = '#ffffff';
-                        setTimeout(() => {
-                            saveBtn.textContent = 'Save';
-                            saveBtn.style.background = '#ffffff';
-                            saveBtn.style.color = '#000000';
-                        }, 2000);
-                    }).catch((error) => {
-                        alert("Database security rejection: " + error.message);
+                        userDisplayNode.textContent = newHandle;
+                        document.getElementById('dash-username-input').value = '';
+                        saveBtn.textContent = 'Saved! ✓'; saveBtn.style.background = '#22c55e'; saveBtn.style.color = '#ffffff';
+                        setTimeout(() => { saveBtn.textContent = 'Save'; saveBtn.style.background = '#ffffff'; saveBtn.style.color = '#000000'; }, 2000);
                     });
                 }
             });
@@ -357,16 +234,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- 3. LIVE FIREBASE CONTROLLER ACTIONS ---
+    // --- 3. RUN LIFECYCLE EVENT ACTIONS ---
     const handleAuthSubmit = (e, mode) => {
         e.preventDefault();
-        const email = document.getElementById('auth-email').value.trim();
-        const password = document.getElementById('auth-password').value;
+        const email = document.getElementById('modal-email').value.trim();
+        const password = document.getElementById('modal-password').value;
 
         if (mode === 'signup') {
             auth.createUserWithEmailAndPassword(email, password)
                 .then((result) => {
-                    // Automatically creates a profile record document inside Firestore during sign up
                     return db.collection('users').doc(result.user.uid).set({
                         username: email.split('@')[0],
                         email: email,
@@ -382,24 +258,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- 4. NAVIGATION RENDERING & STATE ENGINE ---
+    // --- 4. NAVIGATION BAR CONTROLLER ---
     const navMenuContainer = document.querySelector('.nav-menu');
-    let loginBtn = null;
-    let signupBtn = null;
+    let loginBtn = null, signupBtn = null;
 
     if (navMenuContainer) {
-        const navLinks = navMenuContainer.querySelectorAll('a');
-        navLinks.forEach(link => {
+        navMenuContainer.querySelectorAll('a').forEach(link => {
             if (link.textContent.trim() === 'Login') loginBtn = link;
             if (link.textContent.trim() === 'Sign Up') signupBtn = link;
         });
     }
 
     auth.onAuthStateChanged((user) => {
-        const dynamicSettings = document.getElementById('settings-menu-btn');
-        const dynamicLogout = document.getElementById('logout-btn');
-        if (dynamicSettings) dynamicSettings.remove();
-        if (dynamicLogout) dynamicLogout.remove();
+        const oldSettings = document.getElementById('settings-menu-btn');
+        const oldLogout = document.getElementById('logout-btn');
+        if (oldSettings) oldSettings.remove();
+        if (oldLogout) oldLogout.remove();
 
         if (user) {
             if (loginBtn) loginBtn.style.display = 'none';
@@ -410,23 +284,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 settingsBtn.id = 'settings-menu-btn';
                 settingsBtn.href = '#';
                 settingsBtn.textContent = 'Account Settings';
-                settingsBtn.style.cursor = 'pointer';
-                settingsBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    showAuthModal('account', user);
-                });
+                settingsBtn.addEventListener('click', (e) => { e.preventDefault(); showAuthModal('account', user); });
                 navMenuContainer.appendChild(settingsBtn);
 
                 const logoutBtn = document.createElement('a');
                 logoutBtn.id = 'logout-btn';
                 logoutBtn.href = '#';
                 logoutBtn.textContent = 'Logout';
-                logoutBtn.style.cursor = 'pointer';
                 logoutBtn.style.color = '#ef4444';
-                logoutBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    auth.signOut().then(() => window.location.reload());
-                });
+                logoutBtn.addEventListener('click', (e) => { e.preventDefault(); auth.signOut().then(() => window.location.reload()); });
                 navMenuContainer.appendChild(logoutBtn);
             }
         } else {
